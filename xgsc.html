@@ -3,51 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>万能嗅探搜索 - 视频/音乐/文章/网页聚合</title>
+<title>网站修改与上传教程 - 图文详解</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;width:100%;overflow:hidden;font-family:"Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#eee}
-/* ===== 搜索栏 ===== */
-.header{height:60px;background:rgba(212,160,23,.15);backdrop-filter:blur(10px);display:flex;align-items:center;padding:0 20px;gap:10px;flex-shrink:0;border-bottom:1px solid rgba(212,160,23,.3)}
-.header h1{font-size:18px;color:#f4d03f;white-space:nowrap}
-.search-wrap{flex:1;display:flex;gap:8px;max-width:600px}
-.search-wrap input{flex:1;padding:8px 14px;border:none;border-radius:20px;background:rgba(255,255,255,.9);font-size:15px;outline:none}
-.search-wrap button{padding:8px 20px;border:none;border-radius:20px;background:linear-gradient(135deg,#d4a017,#f4d03f);color:#fff;font-size:15px;cursor:pointer;font-weight:bold}
-/* ===== 标签页 ===== */
-.tabs{display:flex;gap:4px;padding:8px 16px;background:rgba(0,0,0,.2);overflow-x:auto;flex-shrink:0}
-.tab{padding:6px 16px;border:none;background:transparent;color:#aaa;cursor:pointer;font-size:14px;border-bottom:2px solid transparent;white-space:nowrap;transition:.2s}
-.tab.active{color:#f4d03f;border-bottom-color:#f4d03f}
-/* ===== 内容区 ===== */
-.content{flex:1;overflow-y:auto;padding:16px;height:calc(100% - 110px)}
-.content::-webkit-scrollbar{width:4px}
-.content::-webkit-scrollbar-thumb{background:#d4a017}
-.panel{display:none}
-.panel.active{display:block}
-/* ===== 加载/空状态 ===== */
-.loading{text-align:center;padding:40px;color:#aaa}
-.empty{text-align:center;padding:40px;color:#666}
-/* ===== 音乐卡片(iTunes真实API) ===== */
-.music-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.music-card{background:rgba(255,255,255,.08);border-radius:12px;overflow:hidden;transition:.2s;cursor:pointer}
-.music-card:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
-.music-card img{width:100%;aspect-ratio:1;object-fit:cover}
-.music-info{padding:8px}
-.music-info h4{font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.music-info p{font-size:11px;color:#aaa;margin-top:2px}
-.music-card audio{width:100%;height:30px;margin-top:4px}
-/* ===== 视频卡片(B站真实API) ===== */
-.video-list{display:flex;flex-direction:column;gap:10px}
-.video-item{display:flex;gap:12px;background:rgba(255,255,255,.08);border-radius:12px;padding:10px;cursor:pointer;transition:.2s}
-.video-item:hover{background:rgba(255,255,255,.15)}
-.video-item .thumb{width:120px;height:80px;border-radius:8px;object-fit:cover;flex-shrink:0}
-.video-item .v-info{flex:1;min-width:0}
-.video-item .v-info h4{font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.video-item .v-info p{font-size:12px;color:#aaa;margin-top:4px}
-.video-player{margin-top:12px;border-radius:12px;overflow:hidden;display:none}
-.video-player iframe{width:100%;height:420px;border:0;display:block}
-/* ===== iframe搜索结果 ===== */
-.iframe-box{width:100%;height:100%;min-height:500px;border:none;border-radius:12px;background:#fff}
-/* ===== 悬浮客服(必须移植到每个新网站) ===== */
+html,body{height:100%;width:100%;overflow-y:auto;overflow-x:hidden;font-family:"Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#eee;font-size:18px;line-height:1.8}
+body{min-height:100%}
+/* 顶部导航 */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(212,160,23,.15);backdrop-filter:blur(10px);padding:12px 20px;border-bottom:1px solid rgba(212,160,23,.3);display:flex;align-items:center;gap:10px}
+.topbar h1{font-size:20px;color:#f4d03f}
+.topbar .back{color:#aaa;text-decoration:none;font-size:14px}
+/* 主内容 */
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+/* 教程卡片（可折叠） */
+.chapter{background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:16px;overflow:hidden;border:1px solid rgba(212,160,23,.2)}
+.chapter-header{padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none;transition:.2s}
+.chapter-header:hover{background:rgba(212,160,23,.1)}
+.chapter-header .num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#d4a017,#f4d03f);color:#000;display:flex;align-items:center;justify-content:center;font-weight:bold;flex-shrink:0}
+.chapter-header .title{font-size:18px;font-weight:bold;color:#f4d03f;flex:1}
+.chapter-header .arrow{color:#aaa;font-size:14px;transition:transform .3s}
+.chapter.open .arrow{transform:rotate(180deg)}
+.chapter-body{max-height:0;overflow:hidden;transition:max-height .4s ease;padding:0 20px}
+.chapter.open .chapter-body{max-height:3000px;padding:0 20px 20px}
+/* 教程内容 */
+.step{margin:16px 0}
+.step h3{color:#48dbfb;font-size:18px;margin-bottom:8px}
+.step p{color:#ccc;margin-bottom:8px}
+.step ul{margin-left:20px;color:#ccc;margin-bottom:8px}
+.step li{margin-bottom:4px}
+/* 代码块 */
+.code-block{background:#1e1e2e;border:1px solid #333;border-radius:8px;padding:12px;margin:10px 0;position:relative;overflow-x:auto}
+.code-block pre{color:#a6e3a1;font-size:14px;white-space:pre-wrap;word-break:break-all}
+.code-block .copy-btn{position:absolute;top:8px;right:8px;background:rgba(212,160,23,.3);border:1px solid #d4a017;color:#f4d03f;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px}
+.code-block .copy-btn:hover{background:rgba(212,160,23,.5)}
+/* 截图占位 */
+.screenshot{width:100%;border-radius:8px;margin:10px 0;border:1px solid rgba(255,255,255,.1);background:#2a2a3e;padding:20px;text-align:center;color:#888;font-size:14px}
+/* 提示框 */
+.tip{background:rgba(72,219,251,.1);border-left:3px solid #48dbfb;padding:12px;margin:10px 0;border-radius:0 8px 8px 0}
+.tip.warn{background:rgba(255,107,107,.1);border-left-color:#ff6b6b}
+.tip.gold{background:rgba(212,160,23,.1);border-left-color:#d4a017}
+/* 悬浮客服 */
 .float-btns{position:fixed;right:0;bottom:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;transition:transform .3s}
 .float-btns.hide{transform:translateX(80px)}
 .fab{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:.2s}
@@ -55,7 +49,6 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:"Microsoft YaHei",s
 .back-top{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes grad{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}
-/* 客服面板 */
 .svc-mask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9998;display:none}
 .svc-mask.show{display:block}
 .svc-panel{position:fixed;right:0;top:0;width:300px;height:100%;background:rgba(30,30,46,.97);backdrop-filter:blur(15px);z-index:9999;padding:20px;overflow-y:auto;transform:translateX(100%);transition:transform .3s;display:none}
@@ -77,49 +70,232 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:"Microsoft YaHei",s
 .c3{background:linear-gradient(135deg,#ff9ff3,#f368e0)}.c4{background:linear-gradient(135deg,#54a0ff,#5f27cd)}
 .c5{background:linear-gradient(135deg,#54ca6b,#27ae60)}.c6{background:linear-gradient(135deg,#ff9f43,#e67e22)}
 .c7{background:linear-gradient(135deg,#00d2d3,#01a3a8)}.c8{background:linear-gradient(135deg,#a55eea,#8854d0)}
-@media(max-width:600px){.header h1{font-size:14px}.video-item .thumb{width:100px;height:67px}.music-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}
+@media(max-width:600px){.wrap{padding:12px}.chapter-header .title{font-size:16px}}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>🔍 万能嗅探</h1>
-  <div class="search-wrap">
-    <input type="text" id="kw" placeholder="输入关键词：AI教程 / 周杰伦 / 编程..." autocomplete="off">
-    <button onclick="doSearch()">搜索</button>
+<div class="topbar">
+  <h1>📖 网站修改教程</h1>
+  <a class="back" href="https://ss1319.github.io/aiss/">← 返回首页</a>
+</div>
+
+<div class="wrap">
+
+<!-- 第1章：认识网站文件结构 -->
+<div class="chapter open">
+  <div class="chapter-header" onclick="toggleChapter(this)">
+    <div class="num">1</div>
+    <div class="title">认识网站文件结构</div>
+    <div class="arrow">▼</div>
+  </div>
+  <div class="chapter-body">
+    <div class="step">
+      <h3>📁 网站文件都在哪里？</h3>
+      <p>你电脑上的网站源码全部放在这个文件夹：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+<pre>E:\000000已设计好的完整HTML源码\AI配置教程\</pre>
+      </div>
+      <p>文件夹结构说明：</p>
+      <ul>
+        <li><b>index.html</b> — 首页（目录页）</li>
+        <li><b>pages\</b> — 每个AI一个独立页面</li>
+        <li><b>assets\css\main.css</b> — 全站样式（颜色、布局）</li>
+        <li><b>assets\js\main.js</b> — 全站交互（搜索、客服面板）</li>
+        <li><b>assets\img\</b> — 所有图片（二维码、截图）</li>
+      </ul>
+      <div class="screenshot">[示意图：文件夹结构截图]</div>
+    </div>
   </div>
 </div>
 
-<div class="tabs">
-  <button class="tab active" data-tab="video">📺 视频</button>
-  <button class="tab" data-tab="music">🎵 音乐</button>
-  <button class="tab" data-tab="article">📄 文章</button>
-  <button class="tab" data-tab="web">🌐 网页</button>
-  <button class="tab" data-tab="map">🗺️ 地图</button>
+<!-- 第2章：如何修改文字内容 -->
+<div class="chapter">
+  <div class="chapter-header" onclick="toggleChapter(this)">
+    <div class="num">2</div>
+    <div class="title">如何修改文字内容</div>
+    <div class="arrow">▼</div>
+  </div>
+  <div class="chapter-body">
+    <div class="step">
+      <h3>✏️ 用什么工具改？</h3>
+      <p>用任何文本编辑器都可以改，推荐用记事本或VS Code：</p>
+      <ul>
+        <li>右键文件 → 打开方式 → 记事本</li>
+        <li>或用VS Code打开（推荐，有高亮）</li>
+      </ul>
+    </div>
+    <div class="step">
+      <h3>🔍 找到要改的位置</h3>
+      <p>比如要改首页标题：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+<pre>&lt;!-- 这是首页标题 --&gt;
+&lt;h1&gt;全国中文AI大全&lt;/h1&gt;
+
+把"全国中文AI大全"改成你想要的文字即可</pre>
+      </div>
+      <p>改完按 Ctrl+S 保存，然后上传到GitHub就生效了。</p>
+      <div class="tip gold">💡 小技巧：在记事本里按 Ctrl+F 可以搜索关键词快速定位要改的位置。</div>
+    </div>
+  </div>
 </div>
 
-<div class="content">
-  <div class="panel active" id="panel-video">
-    <div class="loading" id="videoLoading">输入关键词开始搜索视频（B站真实数据）</div>
-    <div class="video-list" id="videoList"></div>
-    <div class="video-player" id="videoPlayer"><iframe id="videoFrame"></iframe></div>
+<!-- 第3章：如何修改颜色和样式 -->
+<div class="chapter">
+  <div class="chapter-header" onclick="toggleChapter(this)">
+    <div class="num">3</div>
+    <div class="title">如何修改颜色和样式</div>
+    <div class="arrow">▼</div>
   </div>
-  <div class="panel" id="panel-music">
-    <div class="loading" id="musicLoading">输入关键词搜索音乐（iTunes真实数据，可试听）</div>
-    <div class="music-grid" id="musicGrid"></div>
-  </div>
-  <div class="panel" id="panel-article">
-    <iframe class="iframe-box" id="articleFrame" src="about:blank"></iframe>
-  </div>
-  <div class="panel" id="panel-web">
-    <iframe class="iframe-box" id="webFrame" src="about:blank"></iframe>
-  </div>
-  <div class="panel" id="panel-map">
-    <iframe class="iframe-box" id="mapFrame" src="about:blank"></iframe>
+  <div class="chapter-body">
+    <div class="step">
+      <h3>🎨 修改主色调</h3>
+      <p>打开 <b>assets\css\main.css</b> 文件，找到顶部变量：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+<pre>:root {
+  --gold: #d4a017;        /* 金色主色 */
+  --gold-light: #f4d03f;  /* 浅金色 */
+  --bg-dark: #1a1a2e;     /* 背景深色 */
+}</pre>
+      </div>
+      <p>把颜色值改成你喜欢的就行，比如改成蓝色：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+<pre>--gold: #48dbfb;
+--gold-light: #74b9ff;</pre>
+      </div>
+    </div>
+    <div class="step">
+      <h3>🔡 修改字体大小</h3>
+      <p>在main.css里搜索 font-size，找到对应位置修改数字即可：</p>
+      <ul>
+        <li>正文：18px（默认，不要改小）</li>
+        <li>标题：最大32px</li>
+        <li>按钮：16px</li>
+      </ul>
+    </div>
   </div>
 </div>
 
-<!-- ===== 悬浮客服（移植自aiss主站）===== -->
+<!-- 第4章：如何新增一个AI页面 -->
+<div class="chapter">
+  <div class="chapter-header" onclick="toggleChapter(this)">
+    <div class="num">4</div>
+    <div class="title">如何新增一个AI页面</div>
+    <div class="arrow">▼</div>
+  </div>
+  <div class="chapter-body">
+    <div class="step">
+      <h3>📄 复制一个现有页面</h3>
+      <p>1. 进入 <b>pages\</b> 文件夹</p>
+      <p>2. 随便复制一个现有的AI页面，比如复制 ollama.html</p>
+      <p>3. 重命名为新AI的英文名，比如 newai.html</p>
+      <p>4. 双击打开，把里面的文字改成新AI的介绍</p>
+    </div>
+    <div class="step">
+      <h3>🔗 在首页添加入口链接</h3>
+      <p>打开 <b>index.html</b>，找到AI卡片列表，复制一个卡片代码：</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+<pre>&lt;a href="pages/newai.html" class="card"&gt;
+  &lt;h3&gt;新AI名称&lt;/h3&gt;
+  &lt;p&gt;新AI简介&lt;/p&gt;
+&lt;/a&gt;</pre>
+      </div>
+    </div>
+    <div class="step">
+      <h3>📤 上传两个文件</h3>
+      <p>把 pages\newai.html 和 index.html 都上传到GitHub仓库。</p>
+      <div class="tip">⚠️ 文件名必须用英文，不要用中文，否则链接会404。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 第5章：如何上传文件到GitHub -->
+<div class="chapter">
+  <div class="chapter-header" onclick="toggleChapter(this)">
+    <div class="num">5</div>
+    <div class="title">如何上传文件到GitHub（最常用）</div>
+    <div class="arrow">▼</div>
+  </div>
+  <div class="chapter-body">
+    <div class="step">
+      <h3>🖥️ 方法一：用GitHub Desktop（推荐）</h3>
+      <p>1. 打开桌面上的 GitHub Desktop</p>
+      <p>2. 左上角选择仓库 <b>aiss</b></p>
+      <p>3. 修改的文件会自动显示在 Changes 列表里</p>
+      <p>4. 左下角写一句话说明改了什么，点 <b>Commit to main</b></p>
+      <p>5. 点顶部 <b>Push origin</b> 按钮上传</p>
+      <p>6. 等1-2分钟，刷新网页就生效了</p>
+      <div class="screenshot">[示意图：GitHub Desktop界面]</div>
+    </div>
+    <div class="step">
+      <h3>🌐 方法二：用GitHub网页上传</h3>
+      <p>1. 打开 https://github.com/ss1319/aiss</p>
+      <p>2. 点右上角 <b>Add file → Upload files</b></p>
+      <p>3. 把本地文件拖进去</p>
+      <p>4. 点底部绿色按钮 <b>Commit changes</b></p>
+      <p>5. 等1-2分钟生效</p>
+      <div class="screenshot">[示意图：GitHub网页上传界面]</div>
+    </div>
+    <div class="tip warn">
+      ⚠️ 注意：上传后要等1-2分钟GitHub Pages才会更新，不要以为没生效就重复上传。
+    </div>
+  </div>
+</div>
+
+<!-- 第6章：如何替换图片 -->
+<div class="chapter">
+  <div class="chapter-header" onclick="toggleChapter(this)">
+    <div class="num">6</div>
+    <div class="title">如何替换图片</div>
+    <div class="arrow">▼</div>
+  </div>
+  <div class="chapter-body">
+    <div class="step">
+      <h3>🖼️ 替换二维码或截图</h3>
+      <p>1. 把新图片放到 <b>assets\img\</b> 文件夹</p>
+      <p>2. 保持文件名和原来一样（比如 zsm.png），直接覆盖</p>
+      <p>3. 上传到GitHub</p>
+      <p>4. 强制刷新网页：按 Ctrl+Shift+R（清除缓存刷新）</p>
+      <div class="tip">💡 为什么要Ctrl+Shift+R？因为浏览器会缓存旧图片，强制刷新才能看到新的。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 第7章：常见问题 -->
+<div class="chapter">
+  <div class="chapter-header" onclick="toggleChapter(this)">
+    <div class="num">7</div>
+    <div class="title">常见问题解答</div>
+    <div class="arrow">▼</div>
+  </div>
+  <div class="chapter-body">
+    <div class="step">
+      <h3>❓ 上传后网页没变？</h3>
+      <p>回答：GitHub Pages需要1-2分钟构建，按 Ctrl+Shift+R 强制刷新即可。</p>
+    </div>
+    <div class="step">
+      <h3>❓ 打开显示404？</h3>
+      <p>回答：文件名用了中文，改成英文重新上传。比如"教程.html"改成 guide.html。</p>
+    </div>
+    <div class="step">
+      <h3>❓ 图片不显示？</h3>
+      <p>回答：检查图片路径是否正确，必须以 assets/img/ 开头，区分大小写。</p>
+    </div>
+    <div class="step">
+      <h3>❓ 客服面板不见了？</h3>
+      <p>回答：新建页面时要复制客服面板代码（在body最后面），不要漏掉。</p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ===== 悬浮客服 ===== -->
 <div class="float-btns" id="floatBtns">
   <button class="fab svc-fab" id="svcToggle" title="联系客服">💬</button>
   <button class="fab back-top" id="backTop" title="返回顶部">🚀</button>
@@ -145,166 +321,44 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:"Microsoft YaHei",s
 </div>
 
 <script>
-/* ===== 标签切换 ===== */
-document.querySelectorAll(".tab").forEach(function(tab){
-  tab.onclick=function(){
-    document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});
-    tab.classList.add("active");
-    document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("active");});
-    document.getElementById("panel-"+tab.dataset.tab).classList.add("active");
-  };
-});
-
-/* ===== 搜索主入口 ===== */
-document.getElementById("kw").addEventListener("keydown",function(e){if(e.key==="Enter")doSearch();});
-function doSearch(){
-  var kw=document.getElementById("kw").value.trim();
-  if(!kw)return;
-  var active=document.querySelector(".tab.active").dataset.tab;
-  if(active==="video")searchVideo(kw);
-  else if(active==="music")searchMusic(kw);
-  else if(active==="article")searchArticle(kw);
-  else if(active==="web")searchWeb(kw);
-  else if(active==="map")searchMap(kw);
+/* 折叠展开 */
+function toggleChapter(header){
+  var ch=header.parentElement;
+  ch.classList.toggle("open");
 }
-
-/* ===== 视频搜索：B站真实API ===== */
-function searchVideo(kw){
-  var loading=document.getElementById("videoLoading");
-  var list=document.getElementById("videoList");
-  var player=document.getElementById("videoPlayer");
-  loading.style.display="block";loading.textContent="搜索B站视频中...";
-  list.innerHTML="";player.style.display="none";
-  fetch("https://api.bilibili.com/x/web-interface/search/all/v2?keyword="+encodeURIComponent(kw)+"&page=1")
-    .then(function(r){return r.json();})
-    .then(function(d){
-      loading.style.display="none";
-      if(d.code!==0){loading.textContent="B站API暂时不可用";return;}
-      var results=[];
-      if(d.data&&d.data.result){
-        d.data.result.forEach(function(r){
-          if(r.result_type==="video"&&r.data)results=results.concat(r.data);
-        });
-      }
-      if(!results.length){loading.textContent="无结果";return;}
-      results.slice(0,10).forEach(function(v){
-        var item=document.createElement("div");
-        item.className="video-item";
-        item.innerHTML='<img class="thumb" src="'+(v.pic||"")+'" loading="lazy"><div class="v-info"><h4>'+v.title.replace(/<[^>]+>/g,"")+'</h4><p>UP: '+v.author+' · ▶'+v.play+' · 💬'+v.video_review+'</p></div>';
-        item.onclick=function(){playBili(v.bvid,v.cid||v.cid_);};
-        list.appendChild(item);
-      });
-    })
-    .catch(function(){loading.textContent="网络错误，请检查网络后重试";});
+/* 代码块复制 */
+function copyCode(btn){
+  var code=btn.parentElement.querySelector("pre").textContent;
+  navigator.clipboard.writeText(code);
+  btn.textContent="已复制";
+  setTimeout(function(){btn.textContent="复制";},1500);
 }
-
-function playBili(bvid,cid){
-  var player=document.getElementById("videoPlayer");
-  player.style.display="block";
-  document.getElementById("videoFrame").src="https://player.bilibili.com/player.html?bvid="+bvid+"&cid="+cid+"&autoplay=1";
-  player.scrollIntoView({behavior:"smooth"});
-}
-
-/* ===== 音乐搜索：iTunes真实API（支持CORS，可试听）===== */
-function searchMusic(kw){
-  var loading=document.getElementById("musicLoading");
-  var grid=document.getElementById("musicGrid");
-  loading.style.display="block";loading.textContent="搜索音乐中...";
-  grid.innerHTML="";
-  fetch("https://itunes.apple.com/search?term="+encodeURIComponent(kw)+"&media=music&limit=20")
-    .then(function(r){return r.json();})
-    .then(function(d){
-      loading.style.display="none";
-      if(!d.results||!d.results.length){loading.textContent="无结果";return;}
-      d.results.forEach(function(t){
-        var card=document.createElement("div");
-        card.className="music-card";
-        var art=t.artworkUrl100||"";
-        card.innerHTML='<img src="'+art.replace("100x100","300x300")+'" loading="lazy"><div class="music-info"><h4>'+t.trackName+'</h4><p>'+t.artistName+'</p></div>';
-        if(t.previewUrl){
-          var audio=document.createElement("audio");
-          audio.controls=true;audio.src=t.previewUrl;
-          card.appendChild(audio);
-        }
-        grid.appendChild(card);
-      });
-    })
-    .catch(function(){loading.textContent="音乐搜索失败";});
-}
-
-/* ===== 文章搜索：知乎/微信 iframe ===== */
-function searchArticle(kw){
-  document.getElementById("articleFrame").src="https://weixin.sogou.com/weixin?type=2&query="+encodeURIComponent(kw)+"&ie=utf8";
-}
-
-/* ===== 网页搜索：必应 iframe ===== */
-function searchWeb(kw){
-  document.getElementById("webFrame").src="https://www.bing.com/search?q="+encodeURIComponent(kw);
-}
-
-/* ===== 地图搜索：高德地图 iframe ===== */
-function searchMap(kw){
-  document.getElementById("mapFrame").src="https://ditu.amap.com/search?query="+encodeURIComponent(kw);
-}
-
-/* ===== 悬浮客服功能 ===== */
+/* 客服面板 */
 var svcToggle=document.getElementById("svcToggle");
 var svcPanel=document.getElementById("svcPanel");
 var svcMask=document.getElementById("svcMask");
-svcToggle.onclick=function(e){
-  e.stopPropagation();
-  svcPanel.classList.toggle("open");
-  svcMask.classList.toggle("show");
-};
+svcToggle.onclick=function(e){e.stopPropagation();svcPanel.classList.toggle("open");svcMask.classList.toggle("show");};
 svcMask.onclick=function(){svcPanel.classList.remove("open");svcMask.classList.remove("show");};
-document.onclick=function(e){
-  if(svcPanel.classList.contains("open")&&!svcPanel.contains(e.target)&&e.target!==svcToggle){
-    svcPanel.classList.remove("open");svcMask.classList.remove("show");
-  }
-};
-document.addEventListener("keydown",function(e){
-  if(e.key==="Escape"){svcPanel.classList.remove("open");svcMask.classList.remove("show");}
-});
-
-/* ===== 二维码切换 ===== */
+document.onclick=function(e){if(svcPanel.classList.contains("open")&&!svcPanel.contains(e.target)&&e.target!==svcToggle){svcPanel.classList.remove("open");svcMask.classList.remove("show");}};
+document.addEventListener("keydown",function(e){if(e.key==="Escape"){svcPanel.classList.remove("open");svcMask.classList.remove("show");}});
+/* 二维码切换 */
 var wxQr=false;
-function switchQr(){
+function switchQr(e){
   wxQr=!wxQr;
   var img=document.getElementById("qrImg");
   var name=document.getElementById("qrName");
-  if(wxQr){
-    img.src="https://ss1319.github.io/aiss/assets/img/wxsy1349.png";
-    name.textContent="微信公众号";
-    event.target.textContent="切换到赞赏码";
-  }else{
-    img.src="https://ss1319.github.io/aiss/assets/img/zsm.png";
-    name.textContent="赞赏二维码";
-    event.target.textContent="切换到公众号";
-  }
+  if(wxQr){img.src="https://ss1319.github.io/aiss/assets/img/wxsy1349.png";name.textContent="微信公众号";e.target.textContent="切换到赞赏码";}
+  else{img.src="https://ss1319.github.io/aiss/assets/img/zsm.png";name.textContent="赞赏二维码";e.target.textContent="切换到公众号";}
 }
-
-/* ===== 公众号悬停复制 ===== */
-var wxLine=document.getElementById("wxLine");
-wxLine.onmouseenter=function(){
-  navigator.clipboard.writeText("wxsy1349");
-  wxLine.style.opacity="0.7";
-};
-wxLine.onmouseleave=function(){wxLine.style.opacity="1";};
-
-/* ===== 返回顶部 ===== */
-document.getElementById("backTop").onclick=function(){
-  document.querySelector(".content").scrollTo({top:0,behavior:"smooth"});
-};
-
-/* ===== 滚动隐藏悬浮按钮 ===== */
-var content=document.querySelector(".content");
+/* 公众号悬停复制 */
+document.getElementById("wxLine").onmouseenter=function(){navigator.clipboard.writeText("wxsy1349");this.style.opacity="0.7";};
+document.getElementById("wxLine").onmouseleave=function(){this.style.opacity="1";};
+/* 返回顶部 */
+document.getElementById("backTop").onclick=function(){window.scrollTo({top:0,behavior:"smooth"});};
+/* 滚动隐藏悬浮按钮 */
 var floatBtns=document.getElementById("floatBtns");
 var scrollTimer;
-content.onscroll=function(){
-  floatBtns.classList.add("hide");
-  clearTimeout(scrollTimer);
-  scrollTimer=setTimeout(function(){floatBtns.classList.remove("hide");},300);
-};
+window.onscroll=function(){floatBtns.classList.add("hide");clearTimeout(scrollTimer);scrollTimer=setTimeout(function(){floatBtns.classList.remove("hide");},300);};
 </script>
 </body>
 </html>
