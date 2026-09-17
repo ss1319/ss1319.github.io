@@ -3,89 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI大全 - 可视化编辑后台</title>
+<title>AI大全 - 后台管理中心</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif}
-body{background:linear-gradient(135deg,#fff8e7,#ffe9b8,#fff3d6);color:#3d2914}
-::-webkit-scrollbar{width:1px;height:1px}
-::-webkit-scrollbar-thumb{background:#d4a017}
+html,body{height:100%;width:100%;font-family:"Microsoft YaHei",sans-serif}
+body{background:linear-gradient(135deg,#fff8e7,#ffe9b8,#fff3d6);color:#333}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:#d4a017;border-radius:3px}
 ::-webkit-scrollbar-track{background:transparent}
 
-/* 编辑工具栏 */
-.edit-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:8px 16px;display:flex;align-items:center;gap:10px;font-size:13px}
-.edit-bar input{padding:6px 10px;border:1px solid #444;border-radius:5px;background:#222;color:#fff;font-size:13px}
-.edit-bar button{padding:6px 14px;border:none;border-radius:5px;cursor:pointer;font-size:13px;font-weight:600}
-.eb-save{background:#10b981;color:#fff}
-.eb-preview{background:#3b82f6;color:#fff}
-.eb-logout{background:#ef4444;color:#fff}
-.eb-edit{background:#f59e0b;color:#fff}
-
-/* 登录页 */
-.login{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;z-index:10000}
-.lc{background:#fff;padding:36px;width:380px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;z-index:100}
+.lc{background:#fff;padding:36px;width:380px;border-radius:16px}
 .lc h2{text-align:center;margin-bottom:16px;color:#333}
-.lc input{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px;font-size:14px}
+.lc input{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px}
 .lc button{width:100%;padding:13px;background:linear-gradient(135deg,#d4a017,#f4d03f);color:#fff;border:none;border-radius:8px;margin-top:10px;cursor:pointer;font-size:15px;font-weight:700}
 
-/* 前端样式（和aiss一模一样） */
-.top{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);padding:14px 20px;border-bottom:1px solid rgba(212,160,23,.25);margin-top:48px}
-.top h1{font-size:22px;text-align:center;margin-bottom:12px;background:linear-gradient(135deg,#b8860b,#d4a017);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.search-row{display:flex;gap:8px;max-width:700px;margin:0 auto}
-.search-row input{flex:1;padding:11px 20px;border:1.5px solid #d4a017;border-radius:25px;font-size:16px;background:#fff;outline:none}
-.search-row button{padding:11px 26px;border:none;border-radius:25px;background:linear-gradient(135deg,#d4a017,#f4d03f);color:#fff;font-size:16px;cursor:pointer;font-weight:bold}
-.search-tabs{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
-.stab{padding:6px 16px;border:1.5px solid #d4a017;border-radius:18px;background:transparent;color:#8b6914;cursor:pointer;font-size:14px}
-.stab.active{background:linear-gradient(135deg,#d4a017,#f4d03f);color:#fff;border-color:transparent}
+.app{display:none;height:100vh;flex-direction:column}
+.top{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between}
+.top button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;margin-left:8px;font-size:13px}
+.bs{background:#10b981;color:#fff}
+.bp{background:#3b82f6;color:#fff}
+.bo{background:#ef4444;color:#fff}
 
-/* 可编辑元素 */
-[contenteditable="true"]{outline:2px dashed #667eea;outline-offset:2px;cursor:text}
-.edit-border{outline:2px dashed #667eea !important;outline-offset:2px;cursor:pointer}
+.body{flex:1;display:flex;overflow:hidden}
+.side{width:200px;background:rgba(255,255,255,.8);border-right:2px solid #d4a017;overflow-y:auto}
+.side div{padding:12px 16px;cursor:pointer;font-size:14px;border-bottom:1px solid #f0e6c0}
+.side div:hover{background:rgba(212,160,23,.1)}
+.side div.on{background:linear-gradient(90deg,rgba(212,160,23,.3),transparent);color:#b8860b;font-weight:bold;border-left:3px solid #d4a017}
 
-/* 分类卡片 */
-.main{max-width:100%;padding:20px 30px}
-.cat{margin-bottom:16px;background:rgba(255,255,255,.9);border-radius:14px;border:1px solid rgba(212,160,23,.15);overflow:hidden}
-.cat-h{padding:14px 20px;font-size:17px;font-weight:bold;color:#8b6914;cursor:pointer;background:rgba(212,160,23,.08)}
-.cat-b{display:none;padding:16px 20px}
-.cat.open .cat-b{display:block}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-.ai-card{background:#fff;border-radius:12px;padding:16px;text-align:center;border:1px solid rgba(212,160,23,.1);cursor:pointer;transition:transform .2s}
-.ai-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(212,160,23,.15)}
-.ai-card .ic{font-size:36px;margin-bottom:8px}
-.ai-card h4{font-size:15px;color:#3d2914;margin-bottom:4px}
-.ai-card p{font-size:12px;color:#999}
-
-/* 悬浮按钮 */
-.fabs{position:fixed;right:0;bottom:20px;z-index:999;display:flex;flex-direction:column;gap:8px}
-.fab{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.2)}
-.fab-home{background:linear-gradient(135deg,#f39c12,#e74c3c);color:#fff}
-.fab-svc{background:linear-gradient(135deg,#9b59b6,#3498db);color:#fff;animation:bounce 1.2s infinite}
-.fab-top{background:linear-gradient(135deg,#1abc9c,#2ecc71);color:#fff}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-
-/* 客服面板 */
-.svc-panel{position:fixed;right:0;top:0;width:300px;height:100%;background:rgba(255,252,240,.97);z-index:1000;padding:24px;overflow-y:auto;transform:translateX(100%);transition:transform .3s}
-.svc-panel.open{transform:translateX(0)}
-.svc-mask{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:999;display:none}
-.svc-mask.show{display:block}
-
-/* 编辑面板 */
-.edit-panel{position:fixed;left:0;top:48px;width:280px;height:calc(100% - 48px);background:#fff;z-index:999;overflow-y:auto;padding:16px;border-right:2px solid #d4a017;display:none}
-.edit-panel.show{display:block}
-.edit-panel h3{font-size:14px;color:#8b6914;margin-bottom:10px}
-.edit-panel input,.edit-panel select,.edit-panel textarea{width:100%;padding:8px;margin:4px 0;border:1px solid #ddd;border-radius:6px;font-size:13px}
-.edit-panel button{width:100%;padding:8px;background:#d4a017;color:#fff;border:none;border-radius:6px;margin-top:6px;cursor:pointer;font-size:13px}
-
-.toast{position:fixed;top:70px;right:20px;padding:12px 24px;background:#10b981;color:#fff;border-radius:8px;z-index:9999;display:none}
+.main{flex:1;overflow-y:auto;padding:20px}
+.pg{display:none}.pg.on{display:block}
+.card{background:rgba(255,255,255,.9);padding:18px;margin-bottom:14px;border-radius:12px;border:1px solid rgba(212,160,23,.2)}
+.card h3{margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #eee;font-size:15px;color:#8b6914}
+.fr{display:flex;align-items:center;margin-bottom:10px;gap:10px}
+.fr label{width:100px;font-size:13px;color:#666;flex-shrink:0}
+.fr input,.fr select,.fr textarea{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px}
+.fr input[type=color]{width:50px;flex:none}
+.mini{padding:5px 12px;border:none;border-radius:5px;cursor:pointer;font-size:12px}
+.ma{background:#667eea;color:#fff}
+.md{background:#ef4444;color:#fff}
+.it{display:flex;gap:6px;padding:8px;background:#f8f9fa;border-radius:6px;margin-bottom:5px;align-items:center}
+.it input{flex:1;padding:6px;border:1px solid #ddd;border-radius:5px;font-size:13px}
+.st{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.sc{background:#fff;padding:16px;text-align:center;border-radius:10px}
+.sc b{font-size:26px;display:block;color:#b8860b}
+.sc span{font-size:12px;color:#999}
+.ce{width:100%;height:400px;font-family:Consolas,monospace;font-size:12px;padding:10px;border:1px solid #ddd;border-radius:8px}
+.toast{position:fixed;top:60px;right:20px;padding:12px 24px;background:#10b981;color:#fff;border-radius:8px;z-index:999;display:none}
 </style>
 </head>
 <body>
 
-<!-- 登录 -->
 <div class="login" id="pL">
 <div class="lc">
-<h2>可视化编辑后台</h2>
-<p style="text-align:center;color:#999;font-size:13px;margin-bottom:16px">和前端一模一样，直接点内容就能改</p>
+<h2>AI大全后台管理</h2>
+<p style="text-align:center;color:#999;font-size:13px;margin-bottom:16px">所有内容可视化编辑</p>
 <input type="text" id="iU" value="ss1319">
 <input type="password" id="iT" placeholder="GitHub Token">
 <input type="text" id="iR" value="aiss">
@@ -93,74 +65,89 @@ body{background:linear-gradient(135deg,#fff8e7,#ffe9b8,#fff3d6);color:#3d2914}
 </div>
 </div>
 
-<!-- 编辑工具栏 -->
-<div class="edit-bar" id="ebar" style="display:none">
-<b style="color:#f4d03f">可视化编辑</b>
-<button class="eb-edit" onclick="toggleEdit()">编辑模式</button>
-<button class="eb-save" onclick="saveAll()">保存到GitHub</button>
-<button class="eb-preview" onclick="window.open('https://ss1319.github.io/aiss/','_blank')">预览前端</button>
-<button class="eb-logout" onclick="logout()">退出</button>
+<div class="app" id="pA">
+<div class="top">
+<b style="color:#f4d03f">AI大全管理中心</b>
+<div>
+<button class="bs" onclick="saveCfg()">保存配置</button>
+<button class="bp" onclick="window.open('https://ss1319.github.io/aiss/','_blank')">预览主站</button>
+<button class="bo" onclick="logout()">退出</button>
+</div>
+</div>
+<div class="body">
+<div class="side">
+<div class="on" data="dash">仪表盘</div>
+<div data="search">搜索源</div>
+<div data="svc">客服面板</div>
+<div data="cat">AI分类</div>
+<div data="page">AI单页编辑</div>
+<div data="style">样式主题</div>
+</div>
+<div class="main">
+
+<div class="pg on" id="pg-dash">
+<div class="st">
+<div class="sc"><b id="k1">0</b><span>AI总数</span></div>
+<div class="sc"><b id="k2">0</b><span>分类数</span></div>
+<div class="sc"><b id="k3">0</b><span>搜索源</span></div>
+<div class="sc"><b id="k4">0</b><span>客服按钮</span></div>
+</div>
+<div class="card"><h3>说明</h3><p style="line-height:2">左侧切换各功能。所有修改完成后点右上角"保存配置"。前端约1分钟后更新。</p></div>
 </div>
 
-<!-- 编辑面板 -->
-<div class="edit-panel" id="epanel">
-<h3>快速编辑</h3>
-<p style="font-size:12px;color:#999;margin-bottom:10px">点页面上的文字直接编辑。</p>
-<h3 style="margin-top:16px">搜索源配置</h3>
-<div id="epSearch"></div>
-<h3 style="margin-top:16px">客服按钮配置</h3>
-<div id="epSvc"></div>
+<div class="pg" id="pg-search">
+<div class="card"><h3>搜索Tab列表</h3><div id="sList"></div><button class="mini ma" onclick="addS()">+ 添加搜索源</button></div>
 </div>
 
-<!-- 前端主内容（和aiss一模一样） -->
-<div class="top" id="mainTop">
-<h1 contenteditable="true">全国中文AI大全 - 万能嗅探搜索</h1>
-<div class="search-row">
-<input type="text" id="kw" placeholder="输入关键词搜索全互联网...">
-<button onclick="doSearch()">🔍 搜索</button>
+<div class="pg" id="pg-svc">
+<div class="card"><h3>客服基础</h3>
+<div class="fr"><label>公众号ID</label><input id="fWx"></div>
+<div class="fr"><label>提示语</label><input id="fTip"></div>
 </div>
-<div class="search-tabs" id="searchTabs">
-<button class="stab active" data-s="video">📺 视频</button>
-<button class="stab" data-s="music">🎵 音乐</button>
-<button class="stab" data-s="bing">🔍 必应</button>
-<button class="stab" data-s="article">📄 文章</button>
-<button class="stab" data-s="image">🖼️ 图片</button>
-<button class="stab" data-s="so">🌐 360</button>
+<div class="card"><h3>8色按钮</h3><div id="bList"></div><button class="mini ma" onclick="addB()">+ 添加按钮</button></div>
+</div>
+
+<div class="pg" id="pg-cat">
+<div class="card"><h3>分类管理</h3>
+<div class="fr"><label>选择分类</label><select id="cSel" onchange="loadC()"></select></div>
+<div id="aList"></div>
+<button class="mini ma" onclick="addA()">+ 添加AI</button>
+<button class="mini md" onclick="addCat()" style="margin-left:8px">+ 添加分类</button>
 </div>
 </div>
 
-<div class="main" id="mainContent">
-<div id="catList"></div>
+<div class="pg" id="pg-page">
+<div class="card"><h3>AI单页源码编辑</h3>
+<div class="fr"><label>选择AI页面</label><select id="pSel" onchange="loadP()"></select></div>
+<div class="fr"><label>文件路径</label><input id="pPath" readonly></div>
+<textarea class="ce" id="pCode"></textarea>
+<div style="margin-top:8px"><button class="mini ma" onclick="saveP()">保存此页面</button></div>
+</div>
 </div>
 
-<!-- 悬浮按钮 -->
-<div class="fabs">
-<button class="fab fab-home" onclick="alert('主页按钮')">🏠</button>
-<button class="fab fab-svc" onclick="toggleSvc()">💬</button>
-<button class="fab fab-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">🚀</button>
+<div class="pg" id="pg-style">
+<div class="card"><h3>颜色</h3>
+<div class="fr"><label>主色</label><input type="color" id="fM"></div>
+<div class="fr"><label>背景</label><input type="color" id="fBg"></div>
+<div class="fr"><label>客服按钮</label><input type="color" id="fS"></div>
+<div class="fr"><label>主页按钮</label><input type="color" id="fH"></div>
+<div class="fr"><label>顶部按钮</label><input type="color" id="fT"></div>
+</div>
+<div class="card"><h3>字体滚动条</h3>
+<div class="fr"><label>正文字号</label><input type="number" id="fF"></div>
+<div class="fr"><label>标题字号</label><input type="number" id="fTi"></div>
+<div class="fr"><label>滚动条宽</label><input type="number" id="fSc"></div>
+</div>
 </div>
 
-<!-- 客服面板 -->
-<div class="svc-mask" id="svcMask" onclick="toggleSvc()"></div>
-<div class="svc-panel" id="svcPanel">
-<h3 style="margin-bottom:12px">💬 联系客服</h3>
-<div style="text-align:center">
-<img id="qrImg" src="https://ss1319.github.io/aiss/assets/img/zsm.png" style="width:160px;height:160px;display:block;margin:0 auto">
-<div style="font-weight:bold;margin-top:8px" id="qrName">赞赏二维码</div>
-<button onclick="switchQr()" style="margin-top:6px;padding:6px 14px;border:1px solid #d4a017;border-radius:15px;background:transparent;color:#8b6914;cursor:pointer;font-size:12px">切换到公众号</button>
-<p style="font-size:12px;color:#999;margin-top:8px">欢迎自愿赞赏支持作者</p>
-<div style="margin-top:10px;padding:8px;background:rgba(212,160,23,.1);border-radius:8px">
-<span style="font-size:12px;color:#8b6914">微信公众号</span><br>
-<span style="font-weight:bold;color:#b8860b;font-size:18px" id="wxLine" onmouseenter="navigator.clipboard.writeText('wxsy1349')">wxsy1349</span>
 </div>
-<div id="svcBtns" style="margin-top:12px"></div>
 </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-var U="",T="",R="",C={},editMode=false;
+var U="",T="",R="",C={};
 
 function b2s(b64){var b=atob(b64);var a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return new TextDecoder("utf-8").decode(a);}
 function s2b(s){var a=new TextEncoder().encode(s);var b="";for(var i=0;i<a.length;i++)b+=String.fromCharCode(a[i]);return btoa(b);}
@@ -193,115 +180,120 @@ C._sha=d.sha;
 }catch(e){
 C={searchTabs:[],customerService:{publicAccount:"wxsy1349",tip:"欢迎",buttons:[]},categories:[],theme:{}};
 }
-if(!C.theme)C.theme={};
+if(!C.theme)C.theme={mainColor:"#d4a017",bgColor:"#fff8e7",svcColor:"#9b59b6",homeColor:"#f39c12",topColor:"#1abc9c",fontSize:16,titleSize:32,scrollW:1};
 if(!C.customerService)C.customerService={publicAccount:"wxsy1349",tip:"欢迎",buttons:[]};
 if(!C.customerService.buttons)C.customerService.buttons=[];
 if(!C.searchTabs)C.searchTabs=[];
 if(!C.categories)C.categories=[];
 
 document.getElementById("pL").style.display="none";
-document.getElementById("ebar").style.display="flex";
-renderPage();
+document.getElementById("pA").style.display="flex";
+renderAll();
 toast("加载成功");
 }
 
-function renderPage(){
-// 渲染搜索Tab
-var st=document.getElementById("searchTabs");
-st.innerHTML="";
+function renderAll(){
+var tot=0;C.categories.forEach(function(c){tot+=c.items.length;});
+document.getElementById("k1").textContent=tot;
+document.getElementById("k2").textContent=C.categories.length;
+document.getElementById("k3").textContent=C.searchTabs.length;
+document.getElementById("k4").textContent=C.customerService.buttons.length;
+
+var sl=document.getElementById("sList");sl.innerHTML="";
 C.searchTabs.forEach(function(t,i){
-var b=document.createElement("button");
-b.className="stab"+(i===0?" active":"");
-b.textContent=t.name;
-b.onclick=function(){document.querySelectorAll(".stab").forEach(function(x){x.classList.remove("active");});b.classList.add("active");};
-st.appendChild(b);
+var d=document.createElement("div");d.className="it";
+var a=document.createElement("input");a.value=t.name||"";a.onchange=function(){C.searchTabs[i].name=this.value;};
+var b=document.createElement("input");b.value=t.url||"";b.onchange=function(){C.searchTabs[i].url=this.value;};
+var x=document.createElement("button");x.className="mini md";x.textContent="删";x.onclick=function(){C.searchTabs.splice(i,1);renderAll();};
+d.appendChild(a);d.appendChild(b);d.appendChild(x);sl.appendChild(d);
 });
 
-// 渲染AI分类
-var cl=document.getElementById("catList");
-cl.innerHTML="";
-C.categories.forEach(function(c,ci){
-var d=document.createElement("div");
-d.className="cat"+(ci===0?" open":"");
-var h=document.createElement("div");
-h.className="cat-h";
-h.textContent=c.name+" ("+c.items.length+")";
-h.onclick=function(){d.classList.toggle("open");};
-var b=document.createElement("div");
-b.className="cat-b";
-var g=document.createElement("div");
-g.className="grid";
-c.items.forEach(function(it){
-var card=document.createElement("div");
-card.className="ai-card";
-card.innerHTML='<div class="ic">'+(it.i||"🤖")+'</div><h4>'+(it.n||"")+'</h4><p>'+(it.d||"")+'</p>';
-card.onclick=function(){window.open("https://ss1319.github.io/aiss/pages/"+(it.f||"")+".html","_blank");};
-g.appendChild(card);
-});
-b.appendChild(g);
-d.appendChild(h);
-d.appendChild(b);
-cl.appendChild(d);
+document.getElementById("fWx").value=C.customerService.publicAccount||"";
+document.getElementById("fTip").value=C.customerService.tip||"";
+
+var bl=document.getElementById("bList");bl.innerHTML="";
+C.customerService.buttons.forEach(function(it,i){
+var d=document.createElement("div");d.className="it";
+var a=document.createElement("input");a.value=it.name||"";a.style.width="100px";a.onchange=function(){C.customerService.buttons[i].name=this.value;};
+var b=document.createElement("input");b.value=it.url||"";b.onchange=function(){C.customerService.buttons[i].url=this.value;};
+var c=document.createElement("input");c.type="color";c.value=it.color||"#9b59b6";c.style.width="45px";c.onchange=function(){C.customerService.buttons[i].color=this.value;};
+var x=document.createElement("button");x.className="mini md";x.textContent="删";x.onclick=function(){C.customerService.buttons.splice(i,1);renderAll();};
+d.appendChild(a);d.appendChild(b);d.appendChild(c);d.appendChild(x);bl.appendChild(d);
 });
 
-// 渲染客服按钮
-var bh="";
-C.customerService.buttons.forEach(function(b){
-bh+='<a href="'+b.url+'" target="_blank" style="display:block;padding:10px;margin:5px 0;background:'+b.color+'22;border-radius:8px;color:#333;text-decoration:none;font-size:13px">'+b.name+'</a>';
-});
-document.getElementById("svcBtns").innerHTML=bh;
+var cs=document.getElementById("cSel");cs.innerHTML="";
+C.categories.forEach(function(c,i){var o=document.createElement("option");o.value=i;o.text=c.name+" ("+c.items.length+")";cs.appendChild(o);});
+loadC();
 
-// 编辑面板
-var ep=document.getElementById("epSearch");
-ep.innerHTML="";
-C.searchTabs.forEach(function(t,i){
-var d=document.createElement("div");
-d.innerHTML='<input value="'+t.name+'" onchange="C.searchTabs['+i+'].name=this.value" style="margin:3px 0">';
-ep.appendChild(d);
-});
+var ps=document.getElementById("pSel");ps.innerHTML="";
+C.categories.forEach(function(c){c.items.forEach(function(it){var o=document.createElement("option");o.value=it.f;o.text=c.name+" - "+it.n;ps.appendChild(o);});});
+
+document.getElementById("fM").value=C.theme.mainColor;
+document.getElementById("fBg").value=C.theme.bgColor;
+document.getElementById("fS").value=C.theme.svcColor;
+document.getElementById("fH").value=C.theme.homeColor;
+document.getElementById("fT").value=C.theme.topColor;
+document.getElementById("fF").value=C.theme.fontSize;
+document.getElementById("fTi").value=C.theme.titleSize;
+document.getElementById("fSc").value=C.theme.scrollW;
 }
 
-function toggleEdit(){
-editMode=!editMode;
-document.querySelectorAll("[contenteditable]").forEach(function(el){
-if(editMode)el.setAttribute("contenteditable","true");
-else el.removeAttribute("contenteditable");
+function loadC(){
+var ci=document.getElementById("cSel").value;if(ci==="")return;
+var c=C.categories[ci];
+var b=document.getElementById("aList");
+b.innerHTML="<p style='font-size:12px;color:#999;margin-bottom:6px'>"+c.name+" 共"+c.items.length+"个</p>";
+c.items.forEach(function(it,i){
+var d=document.createElement("div");d.className="it";
+var a=document.createElement("input");a.value=it.n||"";a.onchange=function(){C.categories[ci].items[i].n=this.value;};
+var b2=document.createElement("input");b2.value=it.f||"";b2.style.width="80px";b2.onchange=function(){C.categories[ci].items[i].f=this.value;};
+var ic=document.createElement("input");ic.value=it.i||"";ic.style.width="40px";ic.onchange=function(){C.categories[ci].items[i].i=this.value;};
+var ds=document.createElement("input");ds.value=it.d||"";ds.onchange=function(){C.categories[ci].items[i].d=this.value;};
+var x=document.createElement("button");x.className="mini md";x.textContent="删";x.onclick=function(){C.categories[ci].items.splice(i,1);loadC();};
+d.appendChild(a);d.appendChild(b2);d.appendChild(ic);d.appendChild(ds);d.appendChild(x);b.appendChild(d);
 });
-document.getElementById("epanel").classList.toggle("show",editMode);
-toast(editMode?"编辑模式开启":"编辑模式关闭");
+}
+function addA(){var ci=document.getElementById("cSel").value;if(ci==="")return;C.categories[ci].items.push({n:"新AI",f:"newai",i:"🤖",d:""});loadC();renderAll();}
+function addCat(){var n=prompt("分类名称：");if(!n)return;C.categories.push({name:n,items:[]});renderAll();}
+function addS(){C.searchTabs.push({name:"新",url:"https://"});renderAll();}
+function addB(){C.customerService.buttons.push({color:"#9b59b6",name:"新",url:"https://"});renderAll();}
+
+var pSha="";
+async function loadP(){
+var f=document.getElementById("pSel").value;if(!f)return;
+document.getElementById("pPath").value="pages/"+f+".html";
+try{var d=await gGet("pages/"+f+".html");document.getElementById("pCode").value=b2s(d.content);pSha=d.sha;}
+catch(e){document.getElementById("pCode").value="";pSha="";}
+}
+async function saveP(){
+var f=document.getElementById("pSel").value;
+var code=document.getElementById("pCode").value;
+try{await gPut("pages/"+f+".html",code,pSha);toast("保存成功");}
+catch(e){alert("失败:"+e.message);}
 }
 
-function toggleSvc(){
-document.getElementById("svcPanel").classList.toggle("open");
-document.getElementById("svcMask").classList.toggle("show");
-}
-var wq=false;
-function switchQr(){
-wq=!wq;
-document.getElementById("qrImg").src=wq?"https://ss1319.github.io/aiss/assets/img/wxsy1349.png":"https://ss1319.github.io/aiss/assets/img/zsm.png";
-document.getElementById("qrName").textContent=wq?"微信公众号":"赞赏二维码";
-event.target.textContent=wq?"切换到赞赏码":"切换到公众号";
-}
-
-function doSearch(){
-var kw=document.getElementById("kw").value;
-if(!kw){alert("请输入关键词");return;}
-var s=document.querySelector(".stab.active");
-if(!s)return;
-var sid=s.dataset.s;
-var tab=C.searchTabs.find(function(t){return t.id===sid;});
-if(tab)window.open(tab.url+encodeURIComponent(kw),"_blank");
-}
-
-document.querySelectorAll(".stab").forEach(function(s){
-s.onclick=function(){document.querySelectorAll(".stab").forEach(function(x){x.classList.remove("active");});s.classList.add("active");};
+document.querySelectorAll(".side div").forEach(function(t){
+t.onclick=function(){
+document.querySelectorAll(".side div").forEach(function(x){x.classList.remove("on");});
+document.querySelectorAll(".pg").forEach(function(x){x.classList.remove("on");});
+t.classList.add("on");
+document.getElementById("pg-"+t.dataset.p).classList.add("on");
+};
 });
 
-async function saveAll(){
-try{
-await gPut("config.json",JSON.stringify(C,null,2),C._sha);
-toast("保存成功！前端约1分钟后更新");
-}catch(e){alert("失败:"+e.message);}
+async function saveCfg(){
+C.customerService.publicAccount=document.getElementById("fWx").value;
+C.customerService.tip=document.getElementById("fTip").value;
+C.theme.mainColor=document.getElementById("fM").value;
+C.theme.bgColor=document.getElementById("fBg").value;
+C.theme.svcColor=document.getElementById("fS").value;
+C.theme.homeColor=document.getElementById("fH").value;
+C.theme.topColor=document.getElementById("fT").value;
+C.theme.fontSize=parseInt(document.getElementById("fF").value);
+C.theme.titleSize=parseInt(document.getElementById("fTi").value);
+C.theme.scrollW=parseInt(document.getElementById("fSc").value);
+try{await gPut("config.json",JSON.stringify(C,null,2),C._sha);toast("保存成功！前端约1分钟后更新");}
+catch(e){alert("失败:"+e.message);}
 }
 
 function toast(m){var t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none";},2500);}
