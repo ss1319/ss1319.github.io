@@ -144,9 +144,19 @@ body{background:linear-gradient(135deg,#fff8e7,#ffe9b8,#fff3d6);color:#3d2914}
 <div class="svc-mask" id="svcMask" onclick="toggleSvc()"></div>
 <div class="svc-panel" id="svcPanel">
 <h3 style="margin-bottom:12px">💬 联系客服</h3>
-<p>赞赏二维码</p>
-<p style="font-size:12px;color:#999">欢迎自愿赞赏支持作者</p>
-<p style="margin-top:12px">公众号：wxsy1349</p>
+<div style="text-align:center">
+<div style="border:2px solid #d4a017;border-radius:10px;padding:8px;display:inline-block;background:#fff">
+<img id="qrImg" src="https://ss1319.github.io/aiss/assets/img/zsm.png" style="width:160px;height:160px;display:block">
+</div>
+<div style="font-weight:bold;margin-top:8px" id="qrName">赞赏二维码</div>
+<button onclick="switchQr()" style="margin-top:6px;padding:6px 14px;border:1px solid #d4a017;border-radius:15px;background:transparent;color:#8b6914;cursor:pointer;font-size:12px">切换到公众号</button>
+<p style="font-size:12px;color:#999;margin-top:8px">欢迎自愿赞赏支持作者</p>
+<div style="margin-top:10px;padding:8px;background:rgba(212,160,23,.1);border-radius:8px">
+<span style="font-size:12px;color:#8b6914">微信公众号</span><br>
+<span style="font-weight:bold;color:#b8860b;font-size:18px" id="wxLine" onmouseenter="navigator.clipboard.writeText('wxsy1349')">wxsy1349</span>
+</div>
+<div id="svcBtns" style="margin-top:12px"></div>
+</div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -237,12 +247,11 @@ cl.appendChild(d);
 });
 
 // 渲染客服按钮
-var sp=document.getElementById("svcPanel");
 var bh="";
 C.customerService.buttons.forEach(function(b){
 bh+='<a href="'+b.url+'" target="_blank" style="display:block;padding:10px;margin:5px 0;background:'+b.color+'22;border-radius:8px;color:#333;text-decoration:none;font-size:13px">'+b.name+'</a>';
 });
-sp.innerHTML='<h3 style="margin-bottom:12px">💬 联系客服</h3><p>赞赏二维码</p><p style="font-size:12px;color:#999">'+C.customerService.tip+'</p><p style="margin-top:12px">公众号：'+C.customerService.publicAccount+'</p>'+bh;
+document.getElementById("svcBtns").innerHTML=bh;
 
 // 编辑面板
 var ep=document.getElementById("epSearch");
@@ -267,6 +276,13 @@ toast(editMode?"编辑模式开启":"编辑模式关闭");
 function toggleSvc(){
 document.getElementById("svcPanel").classList.toggle("open");
 document.getElementById("svcMask").classList.toggle("show");
+}
+var wq=false;
+function switchQr(){
+wq=!wq;
+document.getElementById("qrImg").src=wq?"https://ss1319.github.io/aiss/assets/img/wxsy1349.png":"https://ss1319.github.io/aiss/assets/img/zsm.png";
+document.getElementById("qrName").textContent=wq?"微信公众号":"赞赏二维码";
+event.target.textContent=wq?"切换到赞赏码":"切换到公众号";
 }
 
 function doSearch(){
