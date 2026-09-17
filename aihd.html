@@ -3,157 +3,215 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI大全后台管理系统</title>
+<title>AI大全 - 后台管理中心</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;width:100%;font-family:"Microsoft YaHei",sans-serif}
-body{background:linear-gradient(135deg,#fff8e7,#ffe9b8,#fff3d6);color:#3d2914}
-::-webkit-scrollbar{width:1px;height:1px}
-::-webkit-scrollbar-thumb{background:#d4a017}
+html,body{height:100%;width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif}
+body{background:#f5f7fa;color:#333}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:#c1c1c1;border-radius:3px}
 ::-webkit-scrollbar-track{background:transparent}
-*{scrollbar-width:thin;scrollbar-color:#d4a017 transparent}
-.login-wrap{display:flex;align-items:center;justify-content:center;height:100%}
-.login-box{background:rgba(255,255,255,.95);border-radius:20px;padding:40px;width:420px;box-shadow:0 10px 40px rgba(212,160,23,.2);border:1px solid rgba(212,160,23,.2)}
-.login-box h1{text-align:center;color:#8b6914;font-size:28px;margin-bottom:20px}
-.login-box input{width:100%;padding:12px 16px;margin:8px 0;border:1px solid #d4a017;border-radius:10px;font-size:15px;outline:none}
-.login-box input:focus{border-color:#f4d03f;box-shadow:0 0 0 3px rgba(244,208,63,.2)}
-.login-box button{width:100%;padding:14px;background:linear-gradient(135deg,#d4a017,#f4d03f);color:#fff;border:none;border-radius:10px;font-size:17px;cursor:pointer;margin-top:12px;font-weight:bold}
-.login-box p{font-size:13px;color:#999;margin-top:12px;line-height:1.6}
-.admin-wrap{display:none;height:100%;flex-direction:column}
-.admin-header{padding:12px 24px;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(212,160,23,.2);position:sticky;top:0;z-index:100}
-.admin-header h1{font-size:20px;color:#8b6914}
-.admin-header button{padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-size:14px;margin-left:8px}
-.btn-save{background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff}
-.btn-logout{background:#e74c3c;color:#fff}
-.admin-body{flex:1;display:flex;overflow:hidden}
-.admin-sidebar{width:220px;background:rgba(255,255,255,.9);border-right:1px solid rgba(212,160,23,.2);overflow-y:auto;padding:12px}
-.side-item{padding:12px 16px;border-radius:10px;cursor:pointer;font-size:15px;margin-bottom:4px;transition:all .2s}
-.side-item:hover{background:rgba(212,160,23,.1)}
-.side-item.active{background:linear-gradient(135deg,#d4a017,#f4d03f);color:#fff}
-.admin-main{flex:1;overflow-y:auto;padding:24px}
+
+/* 登录页 */
+.login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:#fff;border-radius:16px;padding:40px;width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-box h1{text-align:center;color:#333;margin-bottom:8px;font-size:24px}
+.login-box .sub{text-align:center;color:#999;font-size:14px;margin-bottom:24px}
+.login-box input{width:100%;padding:12px 16px;margin:8px 0;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;transition:border .3s}
+.login-box input:focus{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
+.login-box button{width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:12px;font-weight:600}
+.login-box button:hover{opacity:.9}
+.login-box .tip{font-size:12px;color:#aaa;margin-top:16px;text-align:center;line-height:1.6}
+
+/* 主布局 */
+.admin-layout{display:none;height:100vh}
+.sidebar{width:240px;background:#1e293b;color:#fff;display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-logo{padding:20px;font-size:18px;font-weight:700;border-bottom:1px solid #334155;display:flex;align-items:center;gap:10px}
+.sidebar-menu{flex:1;padding:12px;overflow-y:auto}
+.menu-item{padding:12px 16px;border-radius:8px;cursor:pointer;font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:10px;transition:all .2s;color:#cbd5e1}
+.menu-item:hover{background:#334155;color:#fff}
+.menu-item.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.sidebar-footer{padding:16px;border-top:1px solid #334155;font-size:12px;color:#64748b}
+
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.topbar h2{font-size:18px;color:#1e293b}
+.topbar-actions{display:flex;gap:8px}
+.topbar button{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:14px}
+.btn-save{background:#10b981;color:#fff}
+.btn-logout{background:#ef4444;color:#fff}
+.content{flex:1;overflow-y:auto;padding:24px}
+
+/* 面板 */
 .panel{display:none}
 .panel.active{display:block}
-.panel h2{font-size:22px;color:#8b6914;margin-bottom:16px;border-left:4px solid #d4a017;padding-left:12px}
-.card{background:rgba(255,255,255,.9);border-radius:14px;padding:20px;margin-bottom:14px;border:1px solid rgba(212,160,23,.15)}
-.card h3{font-size:17px;color:#8b6914;margin-bottom:12px}
-.card input,.card select,.card textarea{width:100%;padding:10px 14px;margin:6px 0;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none}
-.card input:focus{border-color:#d4a017}
-.card textarea{min-height:80px;resize:vertical}
-.row{display:flex;gap:10px;align-items:center;margin:6px 0}
-.row input{flex:1}
-.mini-btn{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:13px}
-.btn-del{background:#e74c3c;color:#fff}
-.btn-add{background:#3498db;color:#fff}
-.save-bar{position:sticky;bottom:0;padding:16px;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid rgba(212,160,23,.2);text-align:center}
-.save-bar button{padding:14px 40px;background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;border:none;border-radius:12px;font-size:16px;cursor:pointer;font-weight:bold}
-.toast{position:fixed;top:20px;right:20px;padding:14px 24px;border-radius:10px;color:#fff;font-size:15px;z-index:9999;display:none}
+
+/* 统计卡片 */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.stat-card .label{font-size:13px;color:#64748b;margin-bottom:8px}
+.stat-card .value{font-size:28px;font-weight:700;color:#1e293b}
+.stat-card .icon{font-size:32px;float:right;opacity:.3}
+
+/* 图表 */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.chart-box h3{font-size:15px;color:#333;margin-bottom:16px}
+
+/* 卡片 */
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.card h3{font-size:16px;color:#1e293b;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #e2e8f0}
+.form-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.form-row label{width:120px;font-size:14px;color:#64748b;flex-shrink:0}
+.form-row input,.form-row select,.form-row textarea{flex:1;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;outline:none}
+.form-row input:focus,.form-row select:focus{border-color:#667eea}
+.form-row input[type="color"]{width:60px;height:40px;padding:2px;cursor:pointer}
+.form-row input[type="number"]{width:120px}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px}
+.btn-primary{background:#667eea;color:#fff}
+.btn-danger{background:#ef4444;color:#fff}
+.btn-success{background:#10b981;color:#fff}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* 列表 */
+.list-item{display:flex;gap:10px;align-items:center;padding:10px;background:#f8fafc;border-radius:8px;margin-bottom:6px}
+.list-item input{flex:1;padding:8px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px}
+.list-item .del{background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px}
+
+/* Toast */
+.toast{position:fixed;top:20px;right:20px;padding:14px 24px;border-radius:8px;color:#fff;font-size:14px;z-index:9999;display:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .toast.show{display:block;animation:slideIn .3s}
 @keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
-.cat-select{width:200px}
-.item-row{display:flex;gap:8px;align-items:center;padding:8px;background:rgba(212,160,23,.05);border-radius:8px;margin:4px 0}
-.item-row input{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px}
+
+/* 预览iframe */
+.preview-frame{width:100%;height:600px;border:1px solid #e2e8f0;border-radius:8px}
 </style>
 </head>
 <body>
 
 <!-- 登录页 -->
-<div class="login-wrap" id="loginPage">
+<div class="login-screen" id="loginScreen">
 <div class="login-box">
-<h1>⚙️ AI大全后台管理</h1>
-<input type="text" id="username" placeholder="GitHub用户名 (ss1319)" value="ss1319">
-<input type="password" id="token" placeholder="GitHub Token (gho_...)">
-<input type="text" id="repo" placeholder="仓库名 (aiss)" value="aiss">
-<button onclick="doLogin()">🔐 登录管理</button>
-<p>使用GitHub Token登录后可直接修改网站内容并保存到GitHub。<br>Token需要有repo权限。</p>
+<h1>⚙️ AI大全管理中心</h1>
+<p class="sub">登录后可管理网站所有内容</p>
+<input type="text" id="inpUser" placeholder="GitHub用户名" value="ss1319">
+<input type="password" id="inpToken" placeholder="GitHub Token">
+<input type="text" id="inpRepo" placeholder="仓库名" value="aiss">
+<button onclick="doLogin()">🔐 登录</button>
+<p class="tip">Token需要repo权限<br>登录信息保存在本地浏览器</p>
 </div>
 </div>
 
-<!-- 管理后台 -->
-<div class="admin-wrap" id="adminPage">
-<div class="admin-header">
-<h1>⚙️ AI大全后台管理中心</h1>
-<div>
-<button class="btn-save" onclick="saveAll()">💾 保存全部</button>
+<!-- 管理主界面 -->
+<div class="admin-layout" id="adminLayout">
+<div class="sidebar">
+<div class="sidebar-logo">🤖 AI管理中心</div>
+<div class="sidebar-menu">
+<div class="menu-item active" data-p="dashboard">📊 仪表盘</div>
+<div class="menu-item" data-p="search">🔍 搜索源</div>
+<div class="menu-item" data-p="service">💬 客服面板</div>
+<div class="menu-item" data-p="ai">🤖 AI分类管理</div>
+<div class="menu-item" data-p="style">🎨 样式主题</div>
+<div class="menu-item" data-p="preview">👁️ 网站预览</div>
+</div>
+<div class="sidebar-footer">v1.0 专业版</div>
+</div>
+<div class="main-area">
+<div class="topbar">
+<h2 id="pageTitle">📊 仪表盘</h2>
+<div class="topbar-actions">
+<button class="btn-save" onclick="saveAll()">💾 保存到GitHub</button>
 <button class="btn-logout" onclick="doLogout()">退出</button>
 </div>
 </div>
-<div class="admin-body">
-<div class="admin-sidebar">
-<div class="side-item active" data-p="search">🔍 搜索源配置</div>
-<div class="side-item" data-p="service">💬 客服面板</div>
-<div class="side-item" data-p="ai">🤖 AI列表管理</div>
-<div class="side-item" data-p="style">🎨 样式设置</div>
-<div class="side-item" data-p="preview">👁️ 网站预览</div>
-</div>
-<div class="admin-main">
+<div class="content">
 
-<!-- 搜索源配置 -->
-<div class="panel active" id="p-search">
-<h2>🔍 搜索源配置</h2>
+<!-- 仪表盘 -->
+<div class="panel active" id="p-dashboard">
+<div class="stats-grid">
+<div class="stat-card"><div class="icon">🤖</div><div class="label">AI平台总数</div><div class="value" id="statTotal">0</div></div>
+<div class="stat-card"><div class="icon">📂</div><div class="label">分类数量</div><div class="value" id="statCats">0</div></div>
+<div class="stat-card"><div class="icon">🔍</div><div class="label">搜索源</div><div class="value" id="statSearch">0</div></div>
+<div class="stat-card"><div class="icon">💬</div><div class="label">客服按钮</div><div class="value" id="statSvc">0</div></div>
+</div>
+<div class="chart-row">
+<div class="chart-box"><h3>📊 各分类AI数量分布</h3><canvas id="chartPie"></canvas></div>
+<div class="chart-box"><h3>📈 AI数量增长趋势</h3><canvas id="chartBar"></canvas></div>
+</div>
+</div>
+
+<!-- 搜索源 -->
+<div class="panel" id="p-search">
 <div class="card">
-<h3>搜索Tab列表（每行一个：名称|URL前缀）</h3>
-<div id="searchTabs"></div>
-<button class="mini-btn btn-add" onclick="addSearchTab()">+ 添加搜索源</button>
+<h3>🔍 搜索Tab配置</h3>
+<p style="font-size:13px;color:#999;margin-bottom:16px">每个Tab对应一个搜索引擎，用户输入关键词后自动在该引擎搜索。</p>
+<div id="searchTabsList"></div>
+<button class="btn btn-primary" onclick="addSearchTab()">+ 添加搜索源</button>
 </div>
 </div>
 
-<!-- 客服面板配置 -->
+<!-- 客服面板 -->
 <div class="panel" id="p-service">
-<h2>💬 客服面板配置</h2>
 <div class="card">
-<h3>公众号设置</h3>
-<label>公众号ID：<input type="text" id="wxId" value="wxsy1349"></label>
-<label>赞赏提示语：<input type="text" id="tipText" value="欢迎自愿赞赏支持作者"></label>
+<h3>💬 基础设置</h3>
+<div class="form-row"><label>公众号ID</label><input type="text" id="cfgWxId"></div>
+<div class="form-row"><label>赞赏提示语</label><input type="text" id="cfgTip"></div>
+<div class="form-row"><label>赞赏码图片</label><input type="text" id="cfgZsm" placeholder="assets/img/zsm.png"></div>
+<div class="form-row"><label>公众号二维码</label><input type="text" id="cfgWxqr" placeholder="assets/img/wxsy1349.png"></div>
 </div>
 <div class="card">
-<h3>客服按钮列表</h3>
-<div id="svcButtons"></div>
-<button class="mini-btn btn-add" onclick="addSvcButton()">+ 添加按钮</button>
+<h3>🔘 客服按钮（8色）</h3>
+<p style="font-size:13px;color:#999;margin-bottom:16px">每个按钮的名称、链接、颜色都可以自定义。</p>
+<div id="svcBtnList"></div>
+<button class="btn btn-primary" onclick="addSvcBtn()">+ 添加按钮</button>
 </div>
 </div>
 
-<!-- AI列表管理 -->
+<!-- AI分类管理 -->
 <div class="panel" id="p-ai">
-<h2>🤖 AI列表管理</h2>
 <div class="card">
-<h3>分类管理</h3>
-<p style="font-size:14px;color:#999;margin-bottom:12px">选择分类后可编辑其中的AI条目。AI单页文件在pages/目录下，文件名即为英文标识。</p>
-<select id="catSelect" class="cat-select" onchange="loadCategory()"></select>
-<div id="aiItems" style="margin-top:12px"></div>
-<button class="mini-btn btn-add" onclick="addAiItem()">+ 添加AI</button>
+<h3>🤖 分类与AI管理</h3>
+<div class="form-row"><label>选择分类</label><select id="catSel" onchange="loadCatAI()"></select></div>
+<div id="aiListBox"></div>
+<button class="btn btn-primary" onclick="addAIItem()">+ 添加AI</button>
 </div>
 </div>
 
-<!-- 样式设置 -->
+<!-- 样式主题 -->
 <div class="panel" id="p-style">
-<h2>🎨 样式设置</h2>
 <div class="card">
-<h3>颜色主题</h3>
-<label>主色调：<input type="color" id="mainColor" value="#d4a017"></label>
-<label>背景色：<input type="color" id="bgColor" value="#fff8e7"></label>
-<label>滚动条宽度：<input type="number" id="scrollW" value="1" min="1" max="5"></label>
+<h3>🎨 颜色主题</h3>
+<div class="form-row"><label>主色调</label><input type="color" id="cfgMainColor" value="#d4a017"></div>
+<div class="form-row"><label>背景色</label><input type="color" id="cfgBgColor" value="#fff8e7"></div>
+<div class="form-row"><label>卡片背景</label><input type="color" id="cfgCardBg" value="#ffffff"></div>
+<div class="form-row"><label>悬浮按钮-客服</label><input type="color" id="cfgSvcColor" value="#9b59b6"></div>
+<div class="form-row"><label>悬浮按钮-主页</label><input type="color" id="cfgHomeColor" value="#f39c12"></div>
+<div class="form-row"><label>悬浮按钮-顶部</label><input type="color" id="cfgTopColor" value="#1abc9c"></div>
 </div>
 <div class="card">
-<h3>字体设置</h3>
-<label>正文字号：<input type="number" id="fontSize" value="16" min="14" max="32"></label>
-<label>标题字号：<input type="number" id="titleSize" value="32" min="20" max="48"></label>
+<h3>📝 字体与滚动条</h3>
+<div class="form-row"><label>正文字号</label><input type="number" id="cfgFontSize" value="16" min="14" max="32"></div>
+<div class="form-row"><label>标题字号</label><input type="number" id="cfgTitleSize" value="32" min="20" max="48"></div>
+<div class="form-row"><label>滚动条宽度</label><input type="number" id="cfgScrollW" value="1" min="1" max="5"></div>
+</div>
+<div class="card">
+<h3>🔘 按钮样式</h3>
+<div class="form-row"><label>按钮圆角</label><input type="number" id="cfgRadius" value="12" min="4" max="30"></div>
+<div class="form-row"><label>按钮阴影</label><select id="cfgShadow"><option value="none">无</option><option value="small">小</option><option value="medium" selected>中</option><option value="large">大</option></select></div>
 </div>
 </div>
 
-<!-- 网站预览 -->
+<!-- 预览 -->
 <div class="panel" id="p-preview">
-<h2>👁️ 网站预览</h2>
 <div class="card">
-<p style="font-size:16px;line-height:2">点击下方链接在新窗口打开网站：</p>
-<p><a href="https://ss1319.github.io/aiss/" target="_blank" style="color:#8b6914;font-size:18px;font-weight:bold">https://ss1319.github.io/aiss/</a></p>
-<p style="font-size:14px;color:#999;margin-top:12px">保存后约1-2分钟CDN生效，按Ctrl+F5强制刷新。</p>
+<h3>👁️ 网站实时预览</h3>
+<p style="margin-bottom:12px"><a href="https://ss1319.github.io/aiss/" target="_blank" style="color:#667eea;font-weight:bold">https://ss1319.github.io/aiss/</a></p>
+<iframe class="preview-frame" src="https://ss1319.github.io/aiss/"></iframe>
 </div>
 </div>
 
 </div>
-</div>
-<div class="save-bar">
-<button onclick="saveAll()">💾 保存所有修改到GitHub</button>
 </div>
 </div>
 
@@ -162,161 +220,158 @@ body{background:linear-gradient(135deg,#fff8e7,#ffe9b8,#fff3d6);color:#3d2914}
 <script>
 var TOKEN="",USER="",REPO="";
 var config={};
+var pieChart=null,barChart=null;
 
-// 登录
 function doLogin(){
-USER=document.getElementById("username").value.trim();
-TOKEN=document.getElementById("token").value.trim();
-REPO=document.getElementById("repo").value.trim();
-if(!USER||!TOKEN||!REPO){alert("请填写完整");return;}
-localStorage.setItem("admin_user",USER);
-localStorage.setItem("admin_token",TOKEN);
-localStorage.setItem("admin_repo",REPO);
+USER=document.getElementById("inpUser").value.trim();
+TOKEN=document.getElementById("inpToken").value.trim();
+REPO=document.getElementById("inpRepo").value.trim();
+if(!TOKEN){alert("请输入Token");return;}
+localStorage.setItem("au",USER);localStorage.setItem("at",TOKEN);localStorage.setItem("ar",REPO);
 loadConfig();
 }
+function doLogout(){localStorage.clear();location.reload();}
 
-function doLogout(){
-localStorage.removeItem("admin_token");
-document.getElementById("loginPage").style.display="flex";
-document.getElementById("adminPage").style.display="none";
-}
-
-// 加载配置
 async function loadConfig(){
 try{
 var r=await fetch("https://api.github.com/repos/"+USER+"/"+REPO+"/contents/config.json",{headers:{"Authorization":"token "+TOKEN}});
-if(r.status===404){config=defaultConfig();}
-else{var d=await r.json();config=JSON.parse(atob(d.content));config._sha=d.sha;}
-document.getElementById("loginPage").style.display="none";
-document.getElementById("adminPage").style.display="flex";
+if(r.status===404){config=defaultCfg();}
+else{var d=await r.json();config=JSON.parse(decodeURIComponent(escape(atob(d.content))));config._sha=d.sha;}
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("adminLayout").style.display="flex";
 renderAll();
-toast("✅ 配置加载成功");
+toast("✅ 加载成功");
 }catch(e){alert("加载失败: "+e.message);}
 }
 
-function defaultConfig(){
-return {siteName:"全国中文AI大全",searchTabs:[],customerService:{publicAccount:"wxsy1349",tip:"欢迎自愿赞赏支持作者",buttons:[]},categories:[]};
+function defaultCfg(){
+return {siteName:"全国中文AI大全",theme:{mainColor:"#d4a017",bgColor:"#fff8e7",cardBg:"#ffffff",svcColor:"#9b59b6",homeColor:"#f39c12",topColor:"#1abc9c",fontSize:16,titleSize:32,scrollW:1,radius:12,shadow:"medium"},searchTabs:[],service:{publicAccount:"wxsy1349",tip:"欢迎自愿赞赏支持作者",zsmImg:"assets/img/zsm.png",wxqrImg:"assets/img/wxsy1349.png",buttons:[]},categories:[]};
 }
 
-// 渲染所有面板
 function renderAll(){
-renderSearchTabs();
-renderSvcButtons();
-renderCategories();
-document.getElementById("wxId").value=config.customerService.publicAccount;
-document.getElementById("tipText").value=config.customerService.tip;
+renderStats();renderCharts();renderSearch();renderService();renderCats();renderStyle();
 }
 
-// 搜索源
-function renderSearchTabs(){
-var box=document.getElementById("searchTabs");
-box.innerHTML="";
-config.searchTabs.forEach(function(t,i){
-var row=document.createElement("div");row.className="row";
-row.innerHTML='<input value="'+t.name+'" placeholder="Tab名称" onchange="config.searchTabs['+i+'].name=this.value">'+
+function renderStats(){
+document.getElementById("statTotal").textContent=config.categories.reduce((s,c)=>s+c.items.length,0);
+document.getElementById("statCats").textContent=config.categories.length;
+document.getElementById("statSearch").textContent=config.searchTabs.length;
+document.getElementById("statSvc").textContent=config.service.buttons.length;
+}
+
+function renderCharts(){
+var labels=config.categories.map(c=>c.name);
+var data=config.categories.map(c=>c.items.length);
+var colors=["#667eea","#764ba2","#f093fb","#f5576c","#4facfe","#00f2fe","#43e97b","#38f9d7","#fa709a","#fee140","#a18cd1","#fbc2eb","#ff9a9e","#a8edea"];
+if(pieChart)pieChart.destroy();
+pieChart=new Chart(document.getElementById("chartPie"),{type:"doughnut",data:{labels:labels,datasets:[{data:data,backgroundColor:colors}]},options:{responsive:true,plugins:{legend:{position:"right"}}}});
+if(barChart)barChart.destroy();
+barChart=new Chart(document.getElementById("chartBar"),{type:"bar",data:{labels:labels.slice(0,8),datasets:[{label:"AI数量",data:data.slice(0,8),backgroundColor:"#667eea"}]},options:{responsive:true}});
+}
+
+function renderSearch(){
+var box=document.getElementById("searchTabsList");box.innerHTML="";
+config.searchTabs.forEach((t,i)=>{
+var d=document.createElement("div");d.className="list-item";
+d.innerHTML='<input value="'+t.name+'" placeholder="名称" onchange="config.searchTabs['+i+'].name=this.value">'+
 '<input value="'+t.url+'" placeholder="URL前缀" onchange="config.searchTabs['+i+'].url=this.value">'+
-'<button class="mini-btn btn-del" onclick="config.searchTabs.splice('+i+',1);renderSearchTabs()">删除</button>';
-box.appendChild(row);
+'<button class="del" onclick="config.searchTabs.splice('+i+',1);renderSearch()">删除</button>';
+box.appendChild(d);
 });
 }
-function addSearchTab(){
-config.searchTabs.push({name:"新搜索",url:"https://"});
-renderSearchTabs();
-}
+function addSearchTab(){config.searchTabs.push({name:"新搜索",url:"https://"});renderSearch();}
 
-// 客服按钮
-function renderSvcButtons(){
-var box=document.getElementById("svcButtons");
-box.innerHTML="";
-config.customerService.buttons.forEach(function(b,i){
-var row=document.createElement("div");row.className="row";
-row.innerHTML='<input value="'+b.name+'" placeholder="按钮名称" onchange="config.customerService.buttons['+i+'].name=this.value" style="width:150px">'+
-'<input value="'+b.url+'" placeholder="链接地址" onchange="config.customerService.buttons['+i+'].url=this.value">'+
-'<input type="color" value="'+b.color+'" onchange="config.customerService.buttons['+i+'].color=this.value" style="width:60px">'+
-'<button class="mini-btn btn-del" onclick="config.customerService.buttons.splice('+i+',1);renderSvcButtons()">删除</button>';
-box.appendChild(row);
+function renderService(){
+document.getElementById("cfgWxId").value=config.service.publicAccount;
+document.getElementById("cfgTip").value=config.service.tip;
+document.getElementById("cfgZsm").value=config.service.zsmImg;
+document.getElementById("cfgWxqr").value=config.service.wxqrImg;
+var box=document.getElementById("svcBtnList");box.innerHTML="";
+config.service.buttons.forEach((b,i)=>{
+var d=document.createElement("div");d.className="list-item";
+d.innerHTML='<input value="'+b.name+'" placeholder="名称" onchange="config.service.buttons['+i+'].name=this.value" style="width:140px">'+
+'<input value="'+b.url+'" placeholder="链接" onchange="config.service.buttons['+i+'].url=this.value">'+
+'<input type="color" value="'+b.color+'" onchange="config.service.buttons['+i+'].color=this.value" style="width:50px">'+
+'<button class="del" onclick="config.service.buttons.splice('+i+',1);renderService()">删除</button>';
+box.appendChild(d);
 });
 }
-function addSvcButton(){
-config.customerService.buttons.push({id:"c"+(config.customerService.buttons.length+1),color:"#9b59b6",name:"新按钮",url:"https://"});
-renderSvcButtons();
-}
+function addSvcBtn(){config.service.buttons.push({id:"c"+(config.service.buttons.length+1),color:"#9b59b6",name:"新按钮",url:"https://"});renderService();}
 
-// AI分类
-function renderCategories(){
-var sel=document.getElementById("catSelect");
-sel.innerHTML="";
-config.categories.forEach(function(c,i){
-var o=document.createElement("option");o.value=i;o.text=c.name+" ("+c.items.length+")";sel.appendChild(o);
-});
-loadCategory();
+function renderCats(){
+var sel=document.getElementById("catSel");sel.innerHTML="";
+config.categories.forEach((c,i)=>{var o=document.createElement("option");o.value=i;o.text=c.name+" ("+c.items.length+")";sel.appendChild(o);});
+loadCatAI();
 }
-function loadCategory(){
-var ci=document.getElementById("catSelect").value;
-if(ci==="")return;
+function loadCatAI(){
+var ci=document.getElementById("catSel").value;if(ci==="")return;
 var cat=config.categories[ci];
-var box=document.getElementById("aiItems");
-box.innerHTML="<h4 style='margin-bottom:8px'>"+cat.name+" - 共"+cat.items.length+"个AI</h4>";
-cat.items.forEach(function(it,i){
-var row=document.createElement("div");row.className="item-row";
-row.innerHTML='<input value="'+it.n+'" placeholder="名称" onchange="config.categories['+ci+'].items['+i+'].n=this.value">'+
-'<input value="'+it.f+'" placeholder="文件" onchange="config.categories['+ci+'].items['+i+'].f=this.value" style="width:100px">'+
-'<input value="'+it.i+'" placeholder="图标" onchange="config.categories['+ci+'].items['+i+'].i=this.value" style="width:60px">'+
+var box=document.getElementById("aiListBox");box.innerHTML="<p style='margin-bottom:8px;color:#667483'>"+cat.name+" - 共"+cat.items.length+"个AI</p>";
+cat.items.forEach((it,i)=>{
+var d=document.createElement("div");d.className="list-item";
+d.innerHTML='<input value="'+it.n+'" placeholder="名称" onchange="config.categories['+ci+'].items['+i+'].n=this.value">'+
+'<input value="'+it.f+'" placeholder="文件" onchange="config.categories['+ci+'].items['+i+'].f=this.value" style="width:90px">'+
+'<input value="'+it.i+'" placeholder="图标" onchange="config.categories['+ci+'].items['+i+'].i=this.value" style="width:50px">'+
 '<input value="'+it.d+'" placeholder="描述" onchange="config.categories['+ci+'].items['+i+'].d=this.value">'+
-'<button class="mini-btn btn-del" onclick="config.categories['+ci+'].items.splice('+i+',1);loadCategory()">删</button>';
-box.appendChild(row);
+'<button class="del" onclick="config.categories['+ci+'].items.splice('+i+',1);loadCatAI()">删</button>';
+box.appendChild(d);
 });
 }
-function addAiItem(){
-var ci=document.getElementById("catSelect").value;
-if(ci==="")return;
-config.categories[ci].items.push({n:"新AI",f:"newai",i:"🤖",d:"描述"});
-loadCategory();
+function addAIItem(){var ci=document.getElementById("catSel").value;if(ci==="")return;config.categories[ci].items.push({n:"新AI",f:"newai",i:"🤖",d:"描述"});loadCatAI();}
+
+function renderStyle(){
+document.getElementById("cfgMainColor").value=config.theme.mainColor;
+document.getElementById("cfgBgColor").value=config.theme.bgColor;
+document.getElementById("cfgCardBg").value=config.theme.cardBg;
+document.getElementById("cfgSvcColor").value=config.theme.svcColor;
+document.getElementById("cfgHomeColor").value=config.theme.homeColor;
+document.getElementById("cfgTopColor").value=config.theme.topColor;
+document.getElementById("cfgFontSize").value=config.theme.fontSize;
+document.getElementById("cfgTitleSize").value=config.theme.titleSize;
+document.getElementById("cfgScrollW").value=config.theme.scrollW;
+document.getElementById("cfgRadius").value=config.theme.radius;
+document.getElementById("cfgShadow").value=config.theme.shadow;
 }
 
-// 侧边栏切换
-document.querySelectorAll(".side-item").forEach(function(s){
-s.onclick=function(){
-document.querySelectorAll(".side-item").forEach(function(x){x.classList.remove("active");});
-document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("active");});
-s.classList.add("active");
-document.getElementById("p-"+s.dataset.p).classList.add("active");
-};
-});
+document.querySelectorAll(".menu-item").forEach(m=>{m.onclick=()=>{
+document.querySelectorAll(".menu-item").forEach(x=>x.classList.remove("active"));
+document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
+m.classList.add("active");
+document.getElementById("p-"+m.dataset.p).classList.add("active");
+document.getElementById("pageTitle").textContent=m.textContent.trim();
+};});
 
-// 保存
 async function saveAll(){
-config.customerService.publicAccount=document.getElementById("wxId").value;
-config.customerService.tip=document.getElementById("tipText").value;
+config.service.publicAccount=document.getElementById("cfgWxId").value;
+config.service.tip=document.getElementById("cfgTip").value;
+config.service.zsmImg=document.getElementById("cfgZsm").value;
+config.service.wxqrImg=document.getElementById("cfgWxqr").value;
+config.theme.mainColor=document.getElementById("cfgMainColor").value;
+config.theme.bgColor=document.getElementById("cfgBgColor").value;
+config.theme.cardBg=document.getElementById("cfgCardBg").value;
+config.theme.svcColor=document.getElementById("cfgSvcColor").value;
+config.theme.homeColor=document.getElementById("cfgHomeColor").value;
+config.theme.topColor=document.getElementById("cfgTopColor").value;
+config.theme.fontSize=parseInt(document.getElementById("cfgFontSize").value);
+config.theme.titleSize=parseInt(document.getElementById("cfgTitleSize").value);
+config.theme.scrollW=parseInt(document.getElementById("cfgScrollW").value);
+config.theme.radius=parseInt(document.getElementById("cfgRadius").value);
+config.theme.shadow=document.getElementById("cfgShadow").value;
 var content=btoa(unescape(encodeURIComponent(JSON.stringify(config,null,2))));
-var data={message:"admin update config",content:content,branch:"main"};
+var data={message:"admin update",content:content,branch:"main"};
 if(config._sha)data.sha=config._sha;
 try{
-var r=await fetch("https://api.github.com/repos/"+USER+"/"+REPO+"/contents/config.json",{
-method:"PUT",headers:{"Authorization":"token "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify(data)
-});
-if(r.ok){toast("✅ 保存成功！约1分钟后生效");}
-else{var e=await r.json();alert("保存失败: "+JSON.stringify(e));}
-}catch(e){alert("保存失败: "+e.message);}
+var r=await fetch("https://api.github.com/repos/"+USER+"/"+REPO+"/contents/config.json",{method:"PUT",headers:{"Authorization":"token "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify(data)});
+if(r.ok)toast("✅ 保存成功！约1分钟后生效");
+else{var e=await r.json();alert("失败: "+JSON.stringify(e));}
+}catch(e){alert("失败: "+e.message);}
 }
 
-// Toast
-function toast(msg){
-var t=document.getElementById("toast");
-t.textContent=msg;t.style.background="#27ae60";t.classList.add("show");
-setTimeout(function(){t.classList.remove("show");},2500);
-}
+function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.style.background="#10b981";t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);}
 
-// 自动登录
 (function(){
-var u=localStorage.getItem("admin_user"),t=localStorage.getItem("admin_token"),r=localStorage.getItem("admin_repo");
-if(u&&t&&r){
-document.getElementById("username").value=u;
-document.getElementById("token").value=t;
-document.getElementById("repo").value=r;
-TOKEN=t;USER=u;REPO=r;
-loadConfig();
-}
+var u=localStorage.getItem("au"),t=localStorage.getItem("at"),r=localStorage.getItem("ar");
+if(u&&t&&r){document.getElementById("inpUser").value=u;document.getElementById("inpToken").value=t;document.getElementById("inpRepo").value=r;USER=u;TOKEN=t;REPO=r;loadConfig();}
 })();
 </script>
 </body>
