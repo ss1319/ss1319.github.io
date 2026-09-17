@@ -2,213 +2,158 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI大全 - 后台管理中心</title>
+<title>AI大全管理中心</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif}
-body{background:#f5f7fa;color:#333}
+body{background:#f0f2f5;color:#333}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-thumb{background:#c1c1c1;border-radius:3px}
 ::-webkit-scrollbar-track{background:transparent}
-
-/* 登录页 */
 .login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;z-index:9999}
 .login-box{background:#fff;border-radius:16px;padding:40px;width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .login-box h1{text-align:center;color:#333;margin-bottom:8px;font-size:24px}
 .login-box .sub{text-align:center;color:#999;font-size:14px;margin-bottom:24px}
-.login-box input{width:100%;padding:12px 16px;margin:8px 0;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;transition:border .3s}
-.login-box input:focus{border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
+.login-box input{width:100%;padding:12px 16px;margin:8px 0;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none}
+.login-box input:focus{border-color:#667eea}
 .login-box button{width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:12px;font-weight:600}
-.login-box button:hover{opacity:.9}
-.login-box .tip{font-size:12px;color:#aaa;margin-top:16px;text-align:center;line-height:1.6}
-
-/* 主布局 */
 .admin-layout{display:none;height:100vh}
 .sidebar{width:240px;background:#1e293b;color:#fff;display:flex;flex-direction:column;flex-shrink:0}
-.sidebar-logo{padding:20px;font-size:18px;font-weight:700;border-bottom:1px solid #334155;display:flex;align-items:center;gap:10px}
+.sidebar-logo{padding:20px;font-size:18px;font-weight:700;border-bottom:1px solid #334155}
 .sidebar-menu{flex:1;padding:12px;overflow-y:auto}
-.menu-item{padding:12px 16px;border-radius:8px;cursor:pointer;font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:10px;transition:all .2s;color:#cbd5e1}
-.menu-item:hover{background:#334155;color:#fff}
+.menu-item{padding:12px 16px;border-radius:8px;cursor:pointer;font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:10px;color:#cbd5e1}
+.menu-item:hover{background:#334155}
 .menu-item.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.sidebar-footer{padding:16px;border-top:1px solid #334155;font-size:12px;color:#64748b}
-
 .main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.topbar{height:60px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
-.topbar h2{font-size:18px;color:#1e293b}
-.topbar-actions{display:flex;gap:8px}
-.topbar button{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:14px}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.topbar h2{font-size:18px}
+.topbar button{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:14px;margin-left:8px}
 .btn-save{background:#10b981;color:#fff}
 .btn-logout{background:#ef4444;color:#fff}
 .content{flex:1;overflow-y:auto;padding:24px}
-
-/* 面板 */
-.panel{display:none}
-.panel.active{display:block}
-
-/* 统计卡片 */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.panel{display:none}.panel.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
 .stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .stat-card .label{font-size:13px;color:#64748b;margin-bottom:8px}
-.stat-card .value{font-size:28px;font-weight:700;color:#1e293b}
-.stat-card .icon{font-size:32px;float:right;opacity:.3}
-
-/* 图表 */
+.stat-card .value{font-size:28px;font-weight:700}
 .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
 .chart-box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
-.chart-box h3{font-size:15px;color:#333;margin-bottom:16px}
-
-/* 卡片 */
+.chart-box h3{font-size:15px;margin-bottom:16px}
 .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
-.card h3{font-size:16px;color:#1e293b;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #e2e8f0}
+.card h3{font-size:16px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #e2e8f0}
 .form-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
 .form-row label{width:120px;font-size:14px;color:#64748b;flex-shrink:0}
 .form-row input,.form-row select,.form-row textarea{flex:1;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;outline:none}
-.form-row input:focus,.form-row select:focus{border-color:#667eea}
-.form-row input[type="color"]{width:60px;height:40px;padding:2px;cursor:pointer}
-.form-row input[type="number"]{width:120px}
+.form-row input[type=color]{width:60px;height:40px;padding:2px;cursor:pointer}
+.form-row input[type=number]{width:100px}
 .btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px}
 .btn-primary{background:#667eea;color:#fff}
 .btn-danger{background:#ef4444;color:#fff}
-.btn-success{background:#10b981;color:#fff}
-.btn-sm{padding:5px 10px;font-size:12px}
-
-/* 列表 */
-.list-item{display:flex;gap:10px;align-items:center;padding:10px;background:#f8fafc;border-radius:8px;margin-bottom:6px}
+.list-item{display:flex;gap:8px;align-items:center;padding:8px;background:#f8fafc;border-radius:8px;margin-bottom:6px}
 .list-item input{flex:1;padding:8px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px}
-.list-item .del{background:#ef4444;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px}
-
-/* Toast */
-.toast{position:fixed;top:20px;right:20px;padding:14px 24px;border-radius:8px;color:#fff;font-size:14px;z-index:9999;display:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.toast.show{display:block;animation:slideIn .3s}
-@keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
-
-/* 预览iframe */
+.list-item .del{background:#ef4444;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px}
+.toast{position:fixed;top:20px;right:20px;padding:14px 24px;border-radius:8px;color:#fff;z-index:9999;display:none}
+.toast.show{display:block}
+.editor-box{width:100%;height:400px;font-family:monospace;font-size:13px;padding:12px;border:1px solid #e2e8f0;border-radius:8px;resize:vertical}
 .preview-frame{width:100%;height:600px;border:1px solid #e2e8f0;border-radius:8px}
 </style>
 </head>
 <body>
 
-<!-- 登录页 -->
 <div class="login-screen" id="loginScreen">
 <div class="login-box">
-<h1>⚙️ AI大全管理中心</h1>
-<p class="sub">登录后可管理网站所有内容</p>
-<input type="text" id="inpUser" placeholder="GitHub用户名" value="ss1319">
+<h1>AI管理中心</h1>
+<p class="sub">登录后管理网站所有内容</p>
+<input type="text" id="inpUser" value="ss1319">
 <input type="password" id="inpToken" placeholder="GitHub Token">
-<input type="text" id="inpRepo" placeholder="仓库名" value="aiss">
-<button onclick="doLogin()">🔐 登录</button>
-<p class="tip">Token需要repo权限<br>登录信息保存在本地浏览器</p>
+<input type="text" id="inpRepo" value="aiss">
+<button onclick="doLogin()">登录</button>
 </div>
 </div>
 
-<!-- 管理主界面 -->
 <div class="admin-layout" id="adminLayout">
 <div class="sidebar">
-<div class="sidebar-logo">🤖 AI管理中心</div>
+<div class="sidebar-logo">AI管理中心</div>
 <div class="sidebar-menu">
-<div class="menu-item active" data-p="dashboard">📊 仪表盘</div>
-<div class="menu-item" data-p="search">🔍 搜索源</div>
-<div class="menu-item" data-p="service">💬 客服面板</div>
-<div class="menu-item" data-p="ai">🤖 AI分类管理</div>
-<div class="menu-item" data-p="style">🎨 样式主题</div>
-<div class="menu-item" data-p="preview">👁️ 网站预览</div>
+<div class="menu-item active" data-p="dash">仪表盘</div>
+<div class="menu-item" data-p="search">搜索源配置</div>
+<div class="menu-item" data-p="service">客服面板</div>
+<div class="menu-item" data-p="ai">AI分类管理</div>
+<div class="menu-item" data-p="page">AI单页编辑</div>
+<div class="menu-item" data-p="style">样式主题</div>
+<div class="menu-item" data-p="preview">网站预览</div>
 </div>
-<div class="sidebar-footer">v1.0 专业版</div>
 </div>
 <div class="main-area">
 <div class="topbar">
-<h2 id="pageTitle">📊 仪表盘</h2>
-<div class="topbar-actions">
-<button class="btn-save" onclick="saveAll()">💾 保存到GitHub</button>
-<button class="btn-logout" onclick="doLogout()">退出</button>
-</div>
+<h2 id="pageTitle">仪表盘</h2>
+<div><button class="btn-save" onclick="saveAll()">保存到GitHub</button><button class="btn-logout" onclick="doLogout()">退出</button></div>
 </div>
 <div class="content">
 
-<!-- 仪表盘 -->
-<div class="panel active" id="p-dashboard">
+<div class="panel active" id="p-dash">
 <div class="stats-grid">
-<div class="stat-card"><div class="icon">🤖</div><div class="label">AI平台总数</div><div class="value" id="statTotal">0</div></div>
-<div class="stat-card"><div class="icon">📂</div><div class="label">分类数量</div><div class="value" id="statCats">0</div></div>
-<div class="stat-card"><div class="icon">🔍</div><div class="label">搜索源</div><div class="value" id="statSearch">0</div></div>
-<div class="stat-card"><div class="icon">💬</div><div class="label">客服按钮</div><div class="value" id="statSvc">0</div></div>
+<div class="stat-card"><div class="label">AI总数</div><div class="value" id="stTotal">0</div></div>
+<div class="stat-card"><div class="label">分类数</div><div class="value" id="stCats">0</div></div>
+<div class="stat-card"><div class="label">搜索源</div><div class="value" id="stSearch">0</div></div>
+<div class="stat-card"><div class="label">客服按钮</div><div class="value" id="stSvc">0</div></div>
 </div>
 <div class="chart-row">
-<div class="chart-box"><h3>📊 各分类AI数量分布</h3><canvas id="chartPie"></canvas></div>
-<div class="chart-box"><h3>📈 AI数量增长趋势</h3><canvas id="chartBar"></canvas></div>
+<div class="chart-box"><h3>分类分布</h3><canvas id="cPie"></canvas></div>
+<div class="chart-box"><h3>前8分类对比</h3><canvas id="cBar"></canvas></div>
 </div>
 </div>
 
-<!-- 搜索源 -->
 <div class="panel" id="p-search">
-<div class="card">
-<h3>🔍 搜索Tab配置</h3>
-<p style="font-size:13px;color:#999;margin-bottom:16px">每个Tab对应一个搜索引擎，用户输入关键词后自动在该引擎搜索。</p>
-<div id="searchTabsList"></div>
-<button class="btn btn-primary" onclick="addSearchTab()">+ 添加搜索源</button>
-</div>
+<div class="card"><h3>搜索Tab列表</h3><div id="slList"></div><button class="btn btn-primary" onclick="addSL()">添加</button></div>
 </div>
 
-<!-- 客服面板 -->
 <div class="panel" id="p-service">
-<div class="card">
-<h3>💬 基础设置</h3>
-<div class="form-row"><label>公众号ID</label><input type="text" id="cfgWxId"></div>
-<div class="form-row"><label>赞赏提示语</label><input type="text" id="cfgTip"></div>
-<div class="form-row"><label>赞赏码图片</label><input type="text" id="cfgZsm" placeholder="assets/img/zsm.png"></div>
-<div class="form-row"><label>公众号二维码</label><input type="text" id="cfgWxqr" placeholder="assets/img/wxsy1349.png"></div>
+<div class="card"><h3>基础设置</h3>
+<div class="form-row"><label>公众号ID</label><input id="cfgWx"></div>
+<div class="form-row"><label>赞赏提示</label><input id="cfgTip"></div>
 </div>
-<div class="card">
-<h3>🔘 客服按钮（8色）</h3>
-<p style="font-size:13px;color:#999;margin-bottom:16px">每个按钮的名称、链接、颜色都可以自定义。</p>
-<div id="svcBtnList"></div>
-<button class="btn btn-primary" onclick="addSvcBtn()">+ 添加按钮</button>
-</div>
+<div class="card"><h3>客服按钮</h3><div id="svcList"></div><button class="btn btn-primary" onclick="addSvc()">添加按钮</button></div>
 </div>
 
-<!-- AI分类管理 -->
 <div class="panel" id="p-ai">
-<div class="card">
-<h3>🤖 分类与AI管理</h3>
-<div class="form-row"><label>选择分类</label><select id="catSel" onchange="loadCatAI()"></select></div>
-<div id="aiListBox"></div>
-<button class="btn btn-primary" onclick="addAIItem()">+ 添加AI</button>
+<div class="card"><h3>分类管理</h3>
+<div class="form-row"><label>选择分类</label><select id="catSel" onchange="loadCat()"></select></div>
+<div id="aiList"></div>
+<button class="btn btn-primary" onclick="addAI()">添加AI</button>
 </div>
 </div>
 
-<!-- 样式主题 -->
+<div class="panel" id="p-page">
+<div class="card"><h3>AI单页内容编辑</h3>
+<p style="font-size:13px;color:#999;margin-bottom:12px">选择要编辑的AI页面，直接修改HTML源码后保存。</p>
+<div class="form-row"><label>选择页面</label><select id="pageSel" onchange="loadPage()"></select></div>
+<div class="form-row"><label>页面文件名</label><input id="pageName" readonly></div>
+<textarea class="editor-box" id="pageEditor"></textarea>
+<div style="margin-top:12px"><button class="btn btn-primary" onclick="savePage()">保存此页面</button></div>
+</div>
+</div>
+
 <div class="panel" id="p-style">
-<div class="card">
-<h3>🎨 颜色主题</h3>
-<div class="form-row"><label>主色调</label><input type="color" id="cfgMainColor" value="#d4a017"></div>
-<div class="form-row"><label>背景色</label><input type="color" id="cfgBgColor" value="#fff8e7"></div>
-<div class="form-row"><label>卡片背景</label><input type="color" id="cfgCardBg" value="#ffffff"></div>
-<div class="form-row"><label>悬浮按钮-客服</label><input type="color" id="cfgSvcColor" value="#9b59b6"></div>
-<div class="form-row"><label>悬浮按钮-主页</label><input type="color" id="cfgHomeColor" value="#f39c12"></div>
-<div class="form-row"><label>悬浮按钮-顶部</label><input type="color" id="cfgTopColor" value="#1abc9c"></div>
+<div class="card"><h3>颜色主题</h3>
+<div class="form-row"><label>主色</label><input type="color" id="cMain"></div>
+<div class="form-row"><label>背景色</label><input type="color" id="cBg"></div>
+<div class="form-row"><label>客服按钮色</label><input type="color" id="cSvc"></div>
+<div class="form-row"><label>主页按钮色</label><input type="color" id="cHome"></div>
+<div class="form-row"><label>顶部按钮色</label><input type="color" id="cTop"></div>
 </div>
-<div class="card">
-<h3>📝 字体与滚动条</h3>
-<div class="form-row"><label>正文字号</label><input type="number" id="cfgFontSize" value="16" min="14" max="32"></div>
-<div class="form-row"><label>标题字号</label><input type="number" id="cfgTitleSize" value="32" min="20" max="48"></div>
-<div class="form-row"><label>滚动条宽度</label><input type="number" id="cfgScrollW" value="1" min="1" max="5"></div>
-</div>
-<div class="card">
-<h3>🔘 按钮样式</h3>
-<div class="form-row"><label>按钮圆角</label><input type="number" id="cfgRadius" value="12" min="4" max="30"></div>
-<div class="form-row"><label>按钮阴影</label><select id="cfgShadow"><option value="none">无</option><option value="small">小</option><option value="medium" selected>中</option><option value="large">大</option></select></div>
+<div class="card"><h3>字体与滚动条</h3>
+<div class="form-row"><label>正文字号</label><input type="number" id="fSize"></div>
+<div class="form-row"><label>标题字号</label><input type="number" id="tSize"></div>
+<div class="form-row"><label>滚动条宽</label><input type="number" id="sWidth"></div>
 </div>
 </div>
 
-<!-- 预览 -->
 <div class="panel" id="p-preview">
-<div class="card">
-<h3>👁️ 网站实时预览</h3>
-<p style="margin-bottom:12px"><a href="https://ss1319.github.io/aiss/" target="_blank" style="color:#667eea;font-weight:bold">https://ss1319.github.io/aiss/</a></p>
-<iframe class="preview-frame" src="https://ss1319.github.io/aiss/"></iframe>
-</div>
+<div class="card"><h3>网站预览</h3><iframe class="preview-frame" src="https://ss1319.github.io/aiss/"></iframe></div>
 </div>
 
 </div>
@@ -218,9 +163,20 @@ body{background:#f5f7fa;color:#333}
 <div class="toast" id="toast"></div>
 
 <script>
-var TOKEN="",USER="",REPO="";
-var config={};
-var pieChart=null,barChart=null;
+var TOKEN="",USER="",REPO="",config={};
+var pieC=null,barC=null;
+
+function b64ToStr(b64){
+var bin=atob(b64);
+var bytes=new Uint8Array(bin.length);
+for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+return new TextDecoder("utf-8").decode(bytes);
+}
+function strToB64(str){
+var bytes=new TextEncoder().encode(str);
+var bin="";for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+return btoa(bin);
+}
 
 function doLogin(){
 USER=document.getElementById("inpUser").value.trim();
@@ -228,109 +184,130 @@ TOKEN=document.getElementById("inpToken").value.trim();
 REPO=document.getElementById("inpRepo").value.trim();
 if(!TOKEN){alert("请输入Token");return;}
 localStorage.setItem("au",USER);localStorage.setItem("at",TOKEN);localStorage.setItem("ar",REPO);
-loadConfig();
+loadCfg();
 }
 function doLogout(){localStorage.clear();location.reload();}
 
-async function loadConfig(){
+async function ghGet(path){
+var r=await fetch("https://api.github.com/repos/"+USER+"/"+REPO+"/contents/"+path,{headers:{"Authorization":"token "+TOKEN}});
+if(!r.ok)throw new Error("HTTP "+r.status);
+return r.json();
+}
+async function ghPut(path,content,sha){
+var data={message:"update "+path,content:strToB64(content),branch:"main"};
+if(sha)data.sha=sha;
+var r=await fetch("https://api.github.com/repos/"+USER+"/"+REPO+"/contents/"+path,{method:"PUT",headers:{"Authorization":"token "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify(data)});
+if(!r.ok)throw new Error("HTTP "+r.status);
+return r.json();
+}
+
+async function loadCfg(){
 try{
-var r=await fetch("https://api.github.com/repos/"+USER+"/"+REPO+"/contents/config.json",{headers:{"Authorization":"token "+TOKEN}});
-if(r.status===404){config=defaultCfg();}
-else{var d=await r.json();config=JSON.parse(decodeURIComponent(escape(atob(d.content))));config._sha=d.sha;}
+var d=await ghGet("config.json");
+config=JSON.parse(b64ToStr(d.content));
+config._sha=d.sha;
+}catch(e){
+config={siteName:"AI大全",theme:{mainColor:"#d4a017",bgColor:"#fff8e7",svcColor:"#9b59b6",homeColor:"#f39c12",topColor:"#1abc9c",fontSize:16,titleSize:32,scrollW:1},searchTabs:[],service:{publicAccount:"wxsy1349",tip:"欢迎赞赏",buttons:[]},categories:[]};
+}
 document.getElementById("loginScreen").style.display="none";
 document.getElementById("adminLayout").style.display="flex";
 renderAll();
-toast("✅ 加载成功");
-}catch(e){alert("加载失败: "+e.message);}
-}
-
-function defaultCfg(){
-return {siteName:"全国中文AI大全",theme:{mainColor:"#d4a017",bgColor:"#fff8e7",cardBg:"#ffffff",svcColor:"#9b59b6",homeColor:"#f39c12",topColor:"#1abc9c",fontSize:16,titleSize:32,scrollW:1,radius:12,shadow:"medium"},searchTabs:[],service:{publicAccount:"wxsy1349",tip:"欢迎自愿赞赏支持作者",zsmImg:"assets/img/zsm.png",wxqrImg:"assets/img/wxsy1349.png",buttons:[]},categories:[]};
+toast("加载成功");
 }
 
 function renderAll(){
-renderStats();renderCharts();renderSearch();renderService();renderCats();renderStyle();
+renderDash();renderSearch();renderService();renderCats();renderStyle();renderPageList();
 }
 
-function renderStats(){
-document.getElementById("statTotal").textContent=config.categories.reduce((s,c)=>s+c.items.length,0);
-document.getElementById("statCats").textContent=config.categories.length;
-document.getElementById("statSearch").textContent=config.searchTabs.length;
-document.getElementById("statSvc").textContent=config.service.buttons.length;
-}
-
-function renderCharts(){
+function renderDash(){
+var total=config.categories.reduce((s,c)=>s+c.items.length,0);
+document.getElementById("stTotal").textContent=total;
+document.getElementById("stCats").textContent=config.categories.length;
+document.getElementById("stSearch").textContent=config.searchTabs.length;
+document.getElementById("stSvc").textContent=config.service.buttons.length;
 var labels=config.categories.map(c=>c.name);
 var data=config.categories.map(c=>c.items.length);
 var colors=["#667eea","#764ba2","#f093fb","#f5576c","#4facfe","#00f2fe","#43e97b","#38f9d7","#fa709a","#fee140","#a18cd1","#fbc2eb","#ff9a9e","#a8edea"];
-if(pieChart)pieChart.destroy();
-pieChart=new Chart(document.getElementById("chartPie"),{type:"doughnut",data:{labels:labels,datasets:[{data:data,backgroundColor:colors}]},options:{responsive:true,plugins:{legend:{position:"right"}}}});
-if(barChart)barChart.destroy();
-barChart=new Chart(document.getElementById("chartBar"),{type:"bar",data:{labels:labels.slice(0,8),datasets:[{label:"AI数量",data:data.slice(0,8),backgroundColor:"#667eea"}]},options:{responsive:true}});
+if(pieC)pieC.destroy();
+pieC=new Chart(document.getElementById("cPie"),{type:"doughnut",data:{labels:labels,datasets:[{data:data,backgroundColor:colors}]},options:{responsive:true,plugins:{legend:{position:"right"}}}});
+if(barC)barC.destroy();
+barC=new Chart(document.getElementById("cBar"),{type:"bar",data:{labels:labels.slice(0,8),datasets:[{data:data.slice(0,8),backgroundColor:"#667eea"}]},options:{responsive:true,plugins:{legend:{display:false}}}});
 }
 
 function renderSearch(){
-var box=document.getElementById("searchTabsList");box.innerHTML="";
+var box=document.getElementById("slList");box.innerHTML="";
 config.searchTabs.forEach((t,i)=>{
 var d=document.createElement("div");d.className="list-item";
-d.innerHTML='<input value="'+t.name+'" placeholder="名称" onchange="config.searchTabs['+i+'].name=this.value">'+
-'<input value="'+t.url+'" placeholder="URL前缀" onchange="config.searchTabs['+i+'].url=this.value">'+
-'<button class="del" onclick="config.searchTabs.splice('+i+',1);renderSearch()">删除</button>';
+d.innerHTML='<input value="'+esc(t.name)+'" onchange="config.searchTabs['+i+'].name=this.value"><input value="'+esc(t.url)+'" onchange="config.searchTabs['+i+'].url=this.value"><button class="del" onclick="config.searchTabs.splice('+i+',1);renderSearch()">删</button>';
 box.appendChild(d);
 });
 }
-function addSearchTab(){config.searchTabs.push({name:"新搜索",url:"https://"});renderSearch();}
+function addSL(){config.searchTabs.push({name:"新",url:"https://"});renderSearch();}
 
 function renderService(){
-document.getElementById("cfgWxId").value=config.service.publicAccount;
+document.getElementById("cfgWx").value=config.service.publicAccount;
 document.getElementById("cfgTip").value=config.service.tip;
-document.getElementById("cfgZsm").value=config.service.zsmImg;
-document.getElementById("cfgWxqr").value=config.service.wxqrImg;
-var box=document.getElementById("svcBtnList");box.innerHTML="";
+var box=document.getElementById("svcList");box.innerHTML="";
 config.service.buttons.forEach((b,i)=>{
 var d=document.createElement("div");d.className="list-item";
-d.innerHTML='<input value="'+b.name+'" placeholder="名称" onchange="config.service.buttons['+i+'].name=this.value" style="width:140px">'+
-'<input value="'+b.url+'" placeholder="链接" onchange="config.service.buttons['+i+'].url=this.value">'+
-'<input type="color" value="'+b.color+'" onchange="config.service.buttons['+i+'].color=this.value" style="width:50px">'+
-'<button class="del" onclick="config.service.buttons.splice('+i+',1);renderService()">删除</button>';
+d.innerHTML='<input value="'+esc(b.name)+'" style="width:130px" onchange="config.service.buttons['+i+'].name=this.value"><input value="'+esc(b.url)+'" onchange="config.service.buttons['+i+'].url=this.value"><input type="color" value="'+b.color+'" onchange="config.service.buttons['+i+'].color=this.value" style="width:50px"><button class="del" onclick="config.service.buttons.splice('+i+',1);renderService()">删</button>';
 box.appendChild(d);
 });
 }
-function addSvcBtn(){config.service.buttons.push({id:"c"+(config.service.buttons.length+1),color:"#9b59b6",name:"新按钮",url:"https://"});renderService();}
+function addSvc(){config.service.buttons.push({id:"c"+(config.service.buttons.length+1),color:"#9b59b6",name:"新按钮",url:"https://"});renderService();}
 
 function renderCats(){
 var sel=document.getElementById("catSel");sel.innerHTML="";
 config.categories.forEach((c,i)=>{var o=document.createElement("option");o.value=i;o.text=c.name+" ("+c.items.length+")";sel.appendChild(o);});
-loadCatAI();
+loadCat();
 }
-function loadCatAI(){
+function loadCat(){
 var ci=document.getElementById("catSel").value;if(ci==="")return;
 var cat=config.categories[ci];
-var box=document.getElementById("aiListBox");box.innerHTML="<p style='margin-bottom:8px;color:#667483'>"+cat.name+" - 共"+cat.items.length+"个AI</p>";
+var box=document.getElementById("aiList");box.innerHTML="<p style='margin-bottom:8px;color:#666'>"+cat.name+" 共"+cat.items.length+"个</p>";
 cat.items.forEach((it,i)=>{
 var d=document.createElement("div");d.className="list-item";
-d.innerHTML='<input value="'+it.n+'" placeholder="名称" onchange="config.categories['+ci+'].items['+i+'].n=this.value">'+
-'<input value="'+it.f+'" placeholder="文件" onchange="config.categories['+ci+'].items['+i+'].f=this.value" style="width:90px">'+
-'<input value="'+it.i+'" placeholder="图标" onchange="config.categories['+ci+'].items['+i+'].i=this.value" style="width:50px">'+
-'<input value="'+it.d+'" placeholder="描述" onchange="config.categories['+ci+'].items['+i+'].d=this.value">'+
-'<button class="del" onclick="config.categories['+ci+'].items.splice('+i+',1);loadCatAI()">删</button>';
+d.innerHTML='<input value="'+esc(it.n)+'" onchange="config.categories['+ci+'].items['+i+'].n=this.value"><input value="'+esc(it.f)+'" style="width:80px" onchange="config.categories['+ci+'].items['+i+'].f=this.value"><input value="'+esc(it.i)+'" style="width:45px" onchange="config.categories['+ci+'].items['+i+'].i=this.value"><input value="'+esc(it.d)+'" onchange="config.categories['+ci+'].items['+i+'].d=this.value"><button class="del" onclick="config.categories['+ci+'].items.splice('+i+',1);loadCat()">删</button>';
 box.appendChild(d);
 });
 }
-function addAIItem(){var ci=document.getElementById("catSel").value;if(ci==="")return;config.categories[ci].items.push({n:"新AI",f:"newai",i:"🤖",d:"描述"});loadCatAI();}
+function addAI(){var ci=document.getElementById("catSel").value;if(ci==="")return;config.categories[ci].items.push({n:"新AI",f:"newai",i:"🤖",d:"描述"});loadCat();}
+
+var pageSha="";
+function renderPageList(){
+var sel=document.getElementById("pageSel");sel.innerHTML="";
+config.categories.forEach(c=>{
+c.items.forEach(it=>{
+var o=document.createElement("option");o.value=it.f;o.text=c.name+" - "+it.n;sel.appendChild(o);
+});
+});
+}
+async function loadPage(){
+var f=document.getElementById("pageSel").value;
+if(!f)return;
+document.getElementById("pageName").value="pages/"+f+".html";
+try{
+var d=await ghGet("pages/"+f+".html");
+document.getElementById("pageEditor").value=b64ToStr(d.content);
+pageSha=d.sha;
+}catch(e){document.getElementById("pageEditor").value="";pageSha="";toast("页面未找到");}
+}
+async function savePage(){
+var f=document.getElementById("pageSel").value;
+var content=document.getElementById("pageEditor").value;
+try{await ghPut("pages/"+f+".html",content,pageSha);toast("保存成功");}
+catch(e){toast("失败: "+e.message);}
+}
 
 function renderStyle(){
-document.getElementById("cfgMainColor").value=config.theme.mainColor;
-document.getElementById("cfgBgColor").value=config.theme.bgColor;
-document.getElementById("cfgCardBg").value=config.theme.cardBg;
-document.getElementById("cfgSvcColor").value=config.theme.svcColor;
-document.getElementById("cfgHomeColor").value=config.theme.homeColor;
-document.getElementById("cfgTopColor").value=config.theme.topColor;
-document.getElementById("cfgFontSize").value=config.theme.fontSize;
-document.getElementById("cfgTitleSize").value=config.theme.titleSize;
-document.getElementById("cfgScrollW").value=config.theme.scrollW;
-document.getElementById("cfgRadius").value=config.theme.radius;
-document.getElementById("cfgShadow").value=config.theme.shadow;
+document.getElementById("cMain").value=config.theme.mainColor;
+document.getElementById("cBg").value=config.theme.bgColor;
+document.getElementById("cSvc").value=config.theme.svcColor;
+document.getElementById("cHome").value=config.theme.homeColor;
+document.getElementById("cTop").value=config.theme.topColor;
+document.getElementById("fSize").value=config.theme.fontSize;
+document.getElementById("tSize").value=config.theme.titleSize;
+document.getElementById("sWidth").value=config.theme.scrollW;
 }
 
 document.querySelectorAll(".menu-item").forEach(m=>{m.onclick=()=>{
@@ -342,36 +319,26 @@ document.getElementById("pageTitle").textContent=m.textContent.trim();
 };});
 
 async function saveAll(){
-config.service.publicAccount=document.getElementById("cfgWxId").value;
+config.service.publicAccount=document.getElementById("cfgWx").value;
 config.service.tip=document.getElementById("cfgTip").value;
-config.service.zsmImg=document.getElementById("cfgZsm").value;
-config.service.wxqrImg=document.getElementById("cfgWxqr").value;
-config.theme.mainColor=document.getElementById("cfgMainColor").value;
-config.theme.bgColor=document.getElementById("cfgBgColor").value;
-config.theme.cardBg=document.getElementById("cfgCardBg").value;
-config.theme.svcColor=document.getElementById("cfgSvcColor").value;
-config.theme.homeColor=document.getElementById("cfgHomeColor").value;
-config.theme.topColor=document.getElementById("cfgTopColor").value;
-config.theme.fontSize=parseInt(document.getElementById("cfgFontSize").value);
-config.theme.titleSize=parseInt(document.getElementById("cfgTitleSize").value);
-config.theme.scrollW=parseInt(document.getElementById("cfgScrollW").value);
-config.theme.radius=parseInt(document.getElementById("cfgRadius").value);
-config.theme.shadow=document.getElementById("cfgShadow").value;
-var content=btoa(unescape(encodeURIComponent(JSON.stringify(config,null,2))));
-var data={message:"admin update",content:content,branch:"main"};
-if(config._sha)data.sha=config._sha;
-try{
-var r=await fetch("https://api.github.com/repos/"+USER+"/"+REPO+"/contents/config.json",{method:"PUT",headers:{"Authorization":"token "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify(data)});
-if(r.ok)toast("✅ 保存成功！约1分钟后生效");
-else{var e=await r.json();alert("失败: "+JSON.stringify(e));}
-}catch(e){alert("失败: "+e.message);}
+config.theme.mainColor=document.getElementById("cMain").value;
+config.theme.bgColor=document.getElementById("cBg").value;
+config.theme.svcColor=document.getElementById("cSvc").value;
+config.theme.homeColor=document.getElementById("cHome").value;
+config.theme.topColor=document.getElementById("cTop").value;
+config.theme.fontSize=parseInt(document.getElementById("fSize").value);
+config.theme.titleSize=parseInt(document.getElementById("tSize").value);
+config.theme.scrollW=parseInt(document.getElementById("sWidth").value);
+try{await ghPut("config.json",JSON.stringify(config,null,2),config._sha);toast("保存成功");}
+catch(e){toast("失败: "+e.message);}
 }
 
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.style.background="#10b981";t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);}
 
 (function(){
 var u=localStorage.getItem("au"),t=localStorage.getItem("at"),r=localStorage.getItem("ar");
-if(u&&t&&r){document.getElementById("inpUser").value=u;document.getElementById("inpToken").value=t;document.getElementById("inpRepo").value=r;USER=u;TOKEN=t;REPO=r;loadConfig();}
+if(u&&t&&r){document.getElementById("inpUser").value=u;document.getElementById("inpToken").value=t;document.getElementById("inpRepo").value=r;USER=u;TOKEN=t;REPO=r;loadCfg();}
 })();
 </script>
 </body>
