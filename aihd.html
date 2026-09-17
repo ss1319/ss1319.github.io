@@ -6,61 +6,55 @@
 <title>AI大全管理后台</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:"Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;font-size:14px}
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-thumb{background:#c1c1c1;border-radius:3px}
-.login{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center}
-.lc{background:#fff;border-radius:16px;padding:36px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+body{font-family:"Microsoft YaHei";background:#f0f2f5;font-size:14px}
+.login{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center}
+.lc{background:#fff;padding:36px;width:360px;border-radius:16px}
 .lc h2{text-align:center;margin-bottom:16px}
-.lc input{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px;font-size:14px}
-.lc button{width:100%;padding:13px;background:#667eea;color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;margin-top:10px;font-weight:700}
-#err{color:#ef4444;font-size:13px;margin-top:10px;display:none}
-.admin{display:none;min-height:100vh}
-.top{background:#1a1a2e;color:#fff;height:55px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
-.top button{padding:7px 16px;border:none;border-radius:6px;cursor:pointer;margin-left:8px;font-size:13px}
+.lc input{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px}
+.lc button{width:100%;padding:13px;background:#667eea;color:#fff;border:none;border-radius:8px;margin-top:10px;cursor:pointer;font-size:15px}
+.app{display:none}
+.top{background:#1a1a2e;color:#fff;padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between}
+.top button{padding:6px 14px;border:none;border-radius:6px;cursor:pointer;margin-left:8px}
 .bt{background:#10b981;color:#fff}
 .bo{background:#ef4444;color:#fff}
-.tabs{background:#fff;display:flex;border-bottom:2px solid #eee;overflow-x:auto}
-.tab{padding:14px 20px;cursor:pointer;font-size:14px;color:#666;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs{background:#fff;display:flex;border-bottom:2px solid #eee}
+.tab{padding:13px 18px;cursor:pointer;color:#666;border-bottom:3px solid transparent}
 .tab.on{color:#667eea;border-bottom-color:#667eea;font-weight:700}
-.c{padding:20px;max-width:1200px;margin:0 auto}
+.c{padding:18px;max-width:1100px;margin:0 auto}
 .pg{display:none}.pg.on{display:block}
-.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card{background:#fff;padding:18px;margin-bottom:14px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .card h3{margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #eee;font-size:15px}
 .fr{display:flex;align-items:center;margin-bottom:10px;gap:10px}
-.fr label{width:110px;font-size:13px;color:#666;flex-shrink:0}
-.fr input,.fr select{flex:1;padding:9px;border:1px solid #ddd;border-radius:6px;font-size:14px}
-.fr input[type=color]{width:55px;flex:none}
-.fr input[type=number]{width:90px;flex:none}
-.mini{padding:6px 12px;border:none;border-radius:5px;cursor:pointer;font-size:12px}
+.fr label{width:100px;font-size:13px;color:#666;flex-shrink:0}
+.fr input,.fr select{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px}
+.fr input[type=color]{width:50px;flex:none}
+.mini{padding:5px 12px;border:none;border-radius:5px;cursor:pointer;font-size:12px}
 .madd{background:#667eea;color:#fff}
 .mdel{background:#ef4444;color:#fff}
-.it{display:flex;gap:6px;align-items:center;padding:8px;background:#f8f9fa;border-radius:6px;margin-bottom:5px}
-.it input{flex:1;padding:7px;border:1px solid #ddd;border-radius:5px;font-size:13px}
-.st{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.sc{background:#fff;border-radius:12px;padding:18px;text-align:center}
-.sc b{font-size:28px;display:block}
+.it{display:flex;gap:6px;padding:8px;background:#f8f9fa;border-radius:6px;margin-bottom:5px}
+.it input{flex:1;padding:6px;border:1px solid #ddd;border-radius:5px;font-size:13px}
+.st{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.sc{background:#fff;padding:16px;text-align:center;border-radius:10px}
+.sc b{font-size:26px;display:block}
 .sc span{font-size:12px;color:#999}
-.ce{width:100%;height:350px;font-family:monospace;font-size:12px;padding:10px;border:1px solid #ddd;border-radius:8px;resize:vertical}
-.t{position:fixed;top:15px;right:15px;padding:12px 22px;background:#10b981;color:#fff;border-radius:8px;display:none;z-index:999}
+.ce{width:100%;height:300px;font-family:monospace;font-size:12px;padding:10px;border:1px solid #ddd;border-radius:8px}
 </style>
 </head>
 <body>
 
-<div class="login" id="pLogin">
+<div class="login" id="pL">
 <div class="lc">
 <h2>AI大全管理后台</h2>
 <input type="text" id="iU" value="ss1319">
 <input type="password" id="iT" placeholder="GitHub Token">
 <input type="text" id="iR" value="aiss">
-<button onclick="login()">登录</button>
-<div id="err"></div>
+<button onclick="doLogin()">登录</button>
 </div>
 </div>
 
-<div class="admin" id="pAdmin">
+<div class="app" id="pA">
 <div class="top">
-<b>AI大全管理后台</b>
+<b>AI大全管理</b>
 <div><button class="bt" onclick="saveAll()">保存</button><button class="bo" onclick="logout()">退出</button></div>
 </div>
 <div class="tabs">
@@ -81,23 +75,33 @@ body{font-family:"Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;font
 <div class="sc"><b id="k3">0</b><span>搜索源</span></div>
 <div class="sc"><b id="k4">0</b><span>客服按钮</span></div>
 </div>
-<div class="card"><h3>说明</h3><p style="line-height:2">左侧切换各功能模块。所有修改完成后点右上角"保存"按钮。</p></div>
+<div class="card"><p style="line-height:2">这是管理后台。点上方Tab切换各功能。所有修改后点右上角保存。</p></div>
 </div>
 
 <div class="pg" id="pg-search">
-<div class="card"><h3>搜索Tab</h3><div id="sList"></div><button class="mini madd" onclick="addS()">+ 添加</button></div>
+<div class="card">
+<h3>搜索Tab列表</h3>
+<div id="sList"></div>
+<button class="mini madd" onclick="addS()">+ 添加</button>
+</div>
 </div>
 
 <div class="pg" id="pg-svc">
-<div class="card"><h3>基础</h3>
-<div class="fr"><label>公众号</label><input id="fWx"></div>
+<div class="card">
+<h3>客服基础设置</h3>
+<div class="fr"><label>公众号ID</label><input id="fWx"></div>
 <div class="fr"><label>提示语</label><input id="fTip"></div>
 </div>
-<div class="card"><h3>按钮</h3><div id="bList"></div><button class="mini madd" onclick="addB()">+ 添加</button></div>
+<div class="card">
+<h3>客服按钮列表</h3>
+<div id="bList"></div>
+<button class="mini madd" onclick="addB()">+ 添加</button>
+</div>
 </div>
 
 <div class="pg" id="pg-ai">
-<div class="card"><h3>分类管理</h3>
+<div class="card">
+<h3>AI分类管理</h3>
 <div class="fr"><label>选择分类</label><select id="cSel" onchange="loadC()"></select></div>
 <div id="aList"></div>
 <button class="mini madd" onclick="addA()">+ 添加AI</button>
@@ -105,7 +109,8 @@ body{font-family:"Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;font
 </div>
 
 <div class="pg" id="pg-page">
-<div class="card"><h3>单页编辑</h3>
+<div class="card">
+<h3>单页编辑</h3>
 <div class="fr"><label>选择页面</label><select id="pSel" onchange="loadP()"></select></div>
 <div class="fr"><label>路径</label><input id="pPath" readonly></div>
 <textarea class="ce" id="pCode"></textarea>
@@ -114,14 +119,16 @@ body{font-family:"Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;font
 </div>
 
 <div class="pg" id="pg-style">
-<div class="card"><h3>颜色</h3>
+<div class="card">
+<h3>颜色</h3>
 <div class="fr"><label>主色</label><input type="color" id="fM"></div>
-<div class="fr"><label>背景</label><input type="color" id="fB"></div>
+<div class="fr"><label>背景</label><input type="color" id="fBg"></div>
 <div class="fr"><label>客服按钮</label><input type="color" id="fS"></div>
 <div class="fr"><label>主页按钮</label><input type="color" id="fH"></div>
 <div class="fr"><label>顶部按钮</label><input type="color" id="fT"></div>
 </div>
-<div class="card"><h3>字体滚动条</h3>
+<div class="card">
+<h3>字体滚动条</h3>
 <div class="fr"><label>正文字号</label><input type="number" id="fF"></div>
 <div class="fr"><label>标题字号</label><input type="number" id="fTi"></div>
 <div class="fr"><label>滚动条宽</label><input type="number" id="fSc"></div>
@@ -129,30 +136,36 @@ body{font-family:"Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333;font
 </div>
 
 <div class="pg" id="pg-prev">
-<div class="card"><h3>预览</h3><iframe src="https://ss1319.github.io/aiss/" style="width:100%;height:550px;border:1px solid #ddd;border-radius:8px"></iframe></div>
+<div class="card"><h3>预览</h3><iframe src="https://ss1319.github.io/aiss/" style="width:100%;height:500px;border:1px solid #ddd;border-radius:8px"></iframe></div>
 </div>
 
 </div>
 </div>
-
-<div class="t" id="toast"></div>
 
 <script>
 var U="",T="",R="",C={};
 
-function b2s(b64){var b=atob(b64);var a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return new TextDecoder("utf-8").decode(a);}
-function s2b(s){var a=new TextEncoder().encode(s);var b="";for(var i=0;i<a.length;i++)b+=String.fromCharCode(a[i]);return btoa(b);}
+function b2s(b64){
+var b=atob(b64);
+var a=new Uint8Array(b.length);
+for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);
+return new TextDecoder("utf-8").decode(a);
+}
+function s2b(s){
+var a=new TextEncoder().encode(s);
+var b="";
+for(var i=0;i<a.length;i++)b+=String.fromCharCode(a[i]);
+return btoa(b);
+}
 
-function login(){
+function doLogin(){
 U=document.getElementById("iU").value;
 T=document.getElementById("iT").value;
 R=document.getElementById("iR").value;
-var e=document.getElementById("err");
-if(!T){e.style.display="block";e.textContent="请输入Token";return;}
-e.style.display="none";
-doLoad();
+if(!T){alert("请输入Token");return;}
+loadData();
 }
-function logout(){localStorage.clear();location.reload();}
+function logout(){location.reload();}
 
 async function gGet(p){
 var r=await fetch("https://api.github.com/repos/"+U+"/"+R+"/contents/"+p,{headers:{"Authorization":"token "+T}});
@@ -160,14 +173,14 @@ if(!r.ok)throw new Error("HTTP "+r.status);
 return r.json();
 }
 async function gPut(p,c,sha){
-var d={message:"up "+p,content:s2b(c),branch:"main"};
+var d={message:"up",content:s2b(c),branch:"main"};
 if(sha)d.sha=sha;
 var r=await fetch("https://api.github.com/repos/"+U+"/"+R+"/contents/"+p,{method:"PUT",headers:{"Authorization":"token "+T,"Content-Type":"application/json"},body:JSON.stringify(d)});
 if(!r.ok)throw new Error("HTTP "+r.status);
 return r.json();
 }
 
-async function doLoad(){
+async function loadData(){
 try{
 var d=await gGet("config.json");
 C=JSON.parse(b2s(d.content));
@@ -181,51 +194,48 @@ if(!C.customerService.buttons)C.customerService.buttons=[];
 if(!C.searchTabs)C.searchTabs=[];
 if(!C.categories)C.categories=[];
 
-document.getElementById("pLogin").style.display="none";
-document.getElementById("pAdmin").style.display="block";
-render();
-toast("加载成功");
+document.getElementById("pL").style.display="none";
+document.getElementById("pA").style.display="block";
+renderAll();
 }
 
-function render(){
-// 统计
-var tot=0;C.categories.forEach(function(c){tot+=c.items.length;});
+function renderAll(){
+var tot=0;
+C.categories.forEach(function(c){tot+=c.items.length;});
 document.getElementById("k1").textContent=tot;
 document.getElementById("k2").textContent=C.categories.length;
 document.getElementById("k3").textContent=C.searchTabs.length;
 document.getElementById("k4").textContent=C.customerService.buttons.length;
 
-// 搜索源
-var sl=document.getElementById("sList");sl.innerHTML="";
+var sl=document.getElementById("sList");
+sl.innerHTML="";
 C.searchTabs.forEach(function(t,i){
 var d=document.createElement("div");d.className="it";
 var a=document.createElement("input");a.value=t.name||"";a.onchange=function(){C.searchTabs[i].name=this.value;};
 var b=document.createElement("input");b.value=t.url||"";b.onchange=function(){C.searchTabs[i].url=this.value;};
-var x=document.createElement("button");x.className="mini mdel";x.textContent="删";x.onclick=function(){C.searchTabs.splice(i,1);render();};
+var x=document.createElement("button");x.className="mini mdel";x.textContent="删";x.onclick=function(){C.searchTabs.splice(i,1);renderAll();};
 d.appendChild(a);d.appendChild(b);d.appendChild(x);sl.appendChild(d);
 });
 
-// 客服
 document.getElementById("fWx").value=C.customerService.publicAccount||"";
 document.getElementById("fTip").value=C.customerService.tip||"";
+
 var bl=document.getElementById("bList");bl.innerHTML="";
 C.customerService.buttons.forEach(function(it,i){
 var d=document.createElement("div");d.className="it";
-var a=document.createElement("input");a.value=it.name||"";a.style.width="120px";a.onchange=function(){C.customerService.buttons[i].name=this.value;};
+var a=document.createElement("input");a.value=it.name||"";a.style.width="110px";a.onchange=function(){C.customerService.buttons[i].name=this.value;};
 var b=document.createElement("input");b.value=it.url||"";b.onchange=function(){C.customerService.buttons[i].url=this.value;};
 var c=document.createElement("input");c.type="color";c.value=it.color||"#9b59b6";c.style.width="45px";c.onchange=function(){C.customerService.buttons[i].color=this.value;};
-var x=document.createElement("button");x.className="mini mdel";x.textContent="删";x.onclick=function(){C.customerService.buttons.splice(i,1);render();};
+var x=document.createElement("button");x.className="mini mdel";x.textContent="删";x.onclick=function(){C.customerService.buttons.splice(i,1);renderAll();};
 d.appendChild(a);d.appendChild(b);d.appendChild(c);d.appendChild(x);bl.appendChild(d);
 });
 
-// AI分类
 var cs=document.getElementById("cSel");cs.innerHTML="";
 C.categories.forEach(function(c,i){var o=document.createElement("option");o.value=i;o.text=c.name+" ("+c.items.length+")";cs.appendChild(o);});
 loadC();
 
-// 样式
 document.getElementById("fM").value=C.theme.mainColor;
-document.getElementById("fB").value=C.theme.bgColor;
+document.getElementById("fBg").value=C.theme.bgColor;
 document.getElementById("fS").value=C.theme.svcColor;
 document.getElementById("fH").value=C.theme.homeColor;
 document.getElementById("fT").value=C.theme.topColor;
@@ -233,15 +243,16 @@ document.getElementById("fF").value=C.theme.fontSize;
 document.getElementById("fTi").value=C.theme.titleSize;
 document.getElementById("fSc").value=C.theme.scrollW;
 
-// 页面列表
 var ps=document.getElementById("pSel");ps.innerHTML="";
 C.categories.forEach(function(c){c.items.forEach(function(it){var o=document.createElement("option");o.value=it.f;o.text=c.name+" - "+it.n;ps.appendChild(o);});});
 }
 
 function loadC(){
-var ci=document.getElementById("cSel").value;if(ci==="")return;
+var ci=document.getElementById("cSel").value;
+if(ci==="")return;
 var c=C.categories[ci];
-var b=document.getElementById("aList");b.innerHTML="<p style='font-size:12px;color:#999;margin-bottom:6px'>"+c.name+"</p>";
+var b=document.getElementById("aList");
+b.innerHTML="<p style='font-size:12px;color:#999;margin-bottom:6px'>"+c.name+" 共"+c.items.length+"个</p>";
 c.items.forEach(function(it,i){
 var d=document.createElement("div");d.className="it";
 var a=document.createElement("input");a.value=it.n||"";a.onchange=function(){C.categories[ci].items[i].n=this.value;};
@@ -252,9 +263,9 @@ var x=document.createElement("button");x.className="mini mdel";x.textContent="�
 d.appendChild(a);d.appendChild(b2);d.appendChild(ic);d.appendChild(ds);d.appendChild(x);b.appendChild(d);
 });
 }
-function addA(){var ci=document.getElementById("cSel").value;if(ci==="")return;C.categories[ci].items.push({n:"新",f:"newai",i:"🤖",d:""});loadC();}
-function addS(){C.searchTabs.push({name:"新",url:"https://"});render();}
-function addB(){C.customerService.buttons.push({color:"#9b59b6",name:"新",url:"https://"});render();}
+function addA(){var ci=document.getElementById("cSel").value;if(ci==="")return;C.categories[ci].items.push({n:"新AI",f:"newai",i:"🤖",d:""});loadC();}
+function addS(){C.searchTabs.push({name:"新",url:"https://"});renderAll();}
+function addB(){C.customerService.buttons.push({color:"#9b59b6",name:"新",url:"https://"});renderAll();}
 
 var pSha="";
 async function loadP(){
@@ -266,8 +277,8 @@ catch(e){document.getElementById("pCode").value="";pSha="";}
 async function saveP(){
 var f=document.getElementById("pSel").value;
 var code=document.getElementById("pCode").value;
-try{await gPut("pages/"+f+".html",code,pSha);toast("保存成功");}
-catch(e){toast("失败:"+e.message);}
+try{await gPut("pages/"+f+".html",code,pSha);alert("保存成功");}
+catch(e){alert("失败:"+e.message);}
 }
 
 document.querySelectorAll(".tab").forEach(function(t){
@@ -283,18 +294,16 @@ async function saveAll(){
 C.customerService.publicAccount=document.getElementById("fWx").value;
 C.customerService.tip=document.getElementById("fTip").value;
 C.theme.mainColor=document.getElementById("fM").value;
-C.theme.bgColor=document.getElementById("fB").value;
+C.theme.bgColor=document.getElementById("fBg").value;
 C.theme.svcColor=document.getElementById("fS").value;
 C.theme.homeColor=document.getElementById("fH").value;
 C.theme.topColor=document.getElementById("fT").value;
 C.theme.fontSize=parseInt(document.getElementById("fF").value);
 C.theme.titleSize=parseInt(document.getElementById("fTi").value);
 C.theme.scrollW=parseInt(document.getElementById("fSc").value);
-try{await gPut("config.json",JSON.stringify(C,null,2),C._sha);toast("保存成功");}
-catch(e){toast("失败:"+e.message);}
+try{await gPut("config.json",JSON.stringify(C,null,2),C._sha);alert("保存成功");}
+catch(e){alert("失败:"+e.message);}
 }
-
-function toast(m){var t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none";},2500);}
 </script>
 </body>
 </html>
