@@ -161,12 +161,19 @@ if(!C.categories)C.categories=[];
 
 document.getElementById("pL").style.display="none";
 document.getElementById("pA").style.display="block";
+try{
 renderAll();
+}catch(e){
+document.querySelector(".c").innerHTML='<div class="card" style="color:red"><h3>渲染错误</h3><p>'+e.message+'</p><p style="font-size:11px;color:#999">'+e.stack+'</p></div>';
+}
 }
 
 function renderAll(){
 var tot=0;
-for(var i=0;i<C.categories.length;i++)tot+=C.categories[i].items.length;
+for(var i=0;i<C.categories.length;i++){
+if(!C.categories[i].items)C.categories[i].items=[];
+tot+=C.categories[i].items.length;
+}
 document.getElementById("k1").textContent=tot;
 document.getElementById("k2").textContent=C.categories.length;
 document.getElementById("k3").textContent=C.searchTabs.length;
@@ -222,6 +229,7 @@ loadC();
 var ps=document.getElementById("pSel");
 ps.innerHTML="";
 for(var ci=0;ci<C.categories.length;ci++){
+if(!C.categories[ci].items)C.categories[ci].items=[];
 for(var ii=0;ii<C.categories[ci].items.length;ii++){
 var it=C.categories[ci].items[ii];
 var o=document.createElement("option");
@@ -239,6 +247,7 @@ function loadC(){
 var ci=document.getElementById("cSel").value;
 if(ci==="")return;
 var c=C.categories[ci];
+if(!c.items)c.items=[];
 var b=document.getElementById("aList");
 b.innerHTML="<p style='font-size:12px;color:#999'>"+c.name+" 共"+c.items.length+"个</p>";
 for(var i=0;i<c.items.length;i++){
